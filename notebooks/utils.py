@@ -1,5 +1,7 @@
 import re 
 import pandas as pd 
+import os 
+import glob
 
 
 get_genus = lambda taxonomy : re.search('g__([^;]+)', taxonomy).group(1) if (re.search('g__([^;]+)', taxonomy) is not None) else 'none'
@@ -22,3 +24,12 @@ def load_metadata(path:str='../data/bin_metadata.csv'):
 
     metadata_df = metadata_df.set_index('genome_id')
     return metadata_df
+
+
+def load_scaffold_to_bin_map(data_dir:str='../data/', cleaned:bool=True):
+    scaffold_to_bin_map = list()
+    for path in glob.glob(os.path.join(data_dir, f'*_scaffold_to_bin{"_cleaned" if cleaned else ""}.tsv')):
+        scaffold_to_bin_map.append(pd.read_csv(path, sep='\t'))
+    scaffold_to_bin_map = pd.concat(scaffold_to_bin_map).set_index('scaffold_name')['bin']
+    scaffold_to_bin_map = scaffold_to_bin_map.to_dict()
+    return scaffold_to_bin_map

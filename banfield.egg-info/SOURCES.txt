@@ -4,4 +4,9 @@ banfield.egg-info/SOURCES.txt
 banfield.egg-info/dependency_links.txt
 banfield.egg-info/top_level.txt
 src/__init__.py
+src/ggkbase.py
+src/files/__init__.py
+src/files/blast.py
 src/files/fasta.py
+src/files/genbank.py
+src/files/interproscan.py

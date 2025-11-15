@@ -44,7 +44,7 @@ class FASTAFile():
         return obj
         
     @classmethod
-    def from_fasta(cls, path:str):
+    def from_file(cls, path:str):
         obj = cls()
         f = open(path, 'r')
         obj.seqs, obj.ids, obj.descriptions = [], [], []
@@ -57,7 +57,7 @@ class FASTAFile():
         obj.seqs = np.array(obj.seqs)
         obj.ids = np.array(obj.ids)
 
-        # assert len(obj.seqs) == len(np.unique(obj.seqs)), f'FASTAFile.from_fasta: Some of the sequence IDs in {path} are not unique.'
+        # assert len(obj.seqs) == len(np.unique(obj.seqs)), f'FASTAFile.from_file: Some of the sequence IDs in {path} are not unique.'
         return obj 
     
     def get_type(self):

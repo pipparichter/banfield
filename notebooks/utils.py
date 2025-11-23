@@ -4,6 +4,12 @@ import os
 import glob
 
 
+ggkbase_to_id_map = dict()
+ggkbase_to_id_map['SR-VP_05_06_2024_ck_bottom_Methanoperedens_44_24'] = 'methanoperedens_1'
+ggkbase_to_id_map['Final_SR-VP_05_06_2024_coassembly_19kb_linear_ECE_26_1334_complete'] = 'methanoperedens_2'
+ggkbase_to_id_map['SR-VP_05_06_2024_N_top_Candidatus_Methanoperedens_Black-host_type_44_27'] = 'methanoperedens_2'
+
+
 get_genus = lambda taxonomy : re.search('g__([^;]+)', taxonomy).group(1) if (re.search('g__([^;]+)', taxonomy) is not None) else 'none'
 get_domain = lambda taxonomy : re.search('d__([^;]+)', taxonomy).group(1) if (re.search('d__([^;]+)', taxonomy) is not None) else 'none'
 get_species = lambda taxonomy : re.search('s__([^;]+)', taxonomy).group(1) if (re.search('s__([^;]+)', taxonomy) is not None) else 'none'

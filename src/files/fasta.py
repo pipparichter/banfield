@@ -49,14 +49,13 @@ class FASTAFile():
         f = open(path, 'r')
         obj.seqs, obj.ids, obj.descriptions = [], [], []
         for record in SeqIO.parse(path, 'fasta'):
+            # print(record.seq)
             obj.ids.append(record.id)
             obj.descriptions.append(record.description.replace(record.id, '').strip())
             obj.seqs.append(str(record.seq))
         f.close()
-
         obj.seqs = np.array(obj.seqs)
         obj.ids = np.array(obj.ids)
-
         # assert len(obj.seqs) == len(np.unique(obj.seqs)), f'FASTAFile.from_file: Some of the sequence IDs in {path} are not unique.'
         return obj 
     
@@ -68,14 +67,18 @@ class FASTAFile():
         else:
             return 'aa'
         
-    def get_seq(self, id_:str, start:int=0, stop:int=None):
+    def get_seq(self, id_:str, start:int=0, stop:int=None, strand:str='+'):
         assert id_ in self.ids, f'FASTAFile.get_seq: Sequence {id_} is not present.'
 
         seq = self.seqs[self.ids == id_][0]
         stop = len(seq) if (stop is None) else stop
         assert len(seq) >= stop, f'FASTAFile.get_seq: Specified stop {stop} is out of bounds for sequence of length {len(seq)}.' # Prevents an out-of-bound slice from failing silently.
+        
+        seq = seq[start:stop]
+        if strand == '-':
+            seq = get_reverse_complement(seq)
 
-        return seq[start:stop]
+        return seq
     
         
     def get_gc_content(self, exclude_unknown:bool=False, check:bool=False):
@@ -89,7 +92,7 @@ class FASTAFile():
         num_c = residues.count('C')
         return (num_g + num_c) / n
             
-    def to_df(self, parse_description:bool=False) -> pd.DataFrame:
+    def to_df(self, parse_description:bool=True) -> pd.DataFrame:
 
         df = []
         for id_, seq, description in zip(self.ids, self.seqs, self.descriptions):
@@ -101,9 +104,8 @@ class FASTAFile():
                 row['contig_id'] = get_contig_id(id_) # Extract contig ID. 
                 row['start'], row['stop'], row['strand'] = int(row['start']), int(row['stop']), int(row['strand'])
             df.append(row)
-            
+        
         df = pd.DataFrame(df).set_index('id')
-
 
         return df
 

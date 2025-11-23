@@ -3,6 +3,9 @@ import re
 import os 
 
 
+# https://ggkbase.berkeley.edu/organisms/668077/generate?type=genbank
+# https://ggkbase.berkeley.edu/organisms/668075/download?type=genbank 
+
 def scaffold_to_bin_remove_unknown(path:str=None):
     output_path = path.replace('.tsv', '_cleaned.tsv')
     if os.path.exists(output_path):

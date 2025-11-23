@@ -7,6 +7,7 @@ from src.files import FASTAFile
 from tqdm import tqdm 
 import io
 import json 
+import time
 
 
 esm_valid_tokens = {'C', 'D', 'T', 'X', 'E', 'Z', 'H', 'M', 'N', 'L', 'S', 'A', 'P', 'G', 'V', 'W', 'F', 'R', 'Y', 'B', 'J', 'K', 'Q', 'I'}
@@ -22,8 +23,10 @@ def fold_esm(path:str, output_dir:str='../data/structures/esmfold/'):
     url = 'https://api.esmatlas.com//foldSequence/v1/pdb/'
 
     fasta_file = FASTAFile.from_file(path)
+    name = os.path.basename(path).split('.')[0]
+
     for id_, sequence in tqdm(list(zip(fasta_file.ids, fasta_file.seqs)), desc='fold_esm'):
-        path = os.path.join(output_dir, f'{id_}.pdb')
+        path = os.path.join(output_dir, f'{name}_{id_}.pdb')
         if os.path.exists(path):
             continue
         sequence = sequence.replace('*', '').strip()
@@ -38,6 +41,7 @@ def fold_esm(path:str, output_dir:str='../data/structures/esmfold/'):
         except:
             # print(result.text)
             print(f'{id_}: {sequence}')
+        time.sleep(10)
 
 # https://www.rbvi.ucsf.edu/chimerax/data/pae-apr2022/pae.html
 # PAE is predicted aligned error, and is a measure of the relative position of residue i to residue j; this is an assessment of inter-domain relative positioning.

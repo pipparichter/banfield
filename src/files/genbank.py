@@ -61,7 +61,7 @@ def genbank_parse_feature(feature):
     info = dict()
     info['seq'] = re.search(seq_pattern, feature, flags=re.MULTILINE).group(1).replace('\n', '').replace(' ', '').replace('*', '')
     info['product'] = re.search(product_pattern, feature, flags=re.MULTILINE).group(1).replace('\n', '')
-    info['product'] = re.sub('\s{2,}', '', info['product']) # Remove all the extra whitespace.
+    info['product'] = re.sub(r'\s{2,}', '', info['product']) # Remove all the extra whitespace.
     # info['locus_tag'] = re.search(locus_tag_pattern, feature, flags=re.MULTILINE).group(1).replace('\n', '')
     return info 
 
@@ -94,6 +94,8 @@ class GenBankFile():
             contig_df = contig_df.rename(columns={'translation':'seq'})
             # contig_df['locus_tag'] = [f'{contig_id}_{i + 1}' for i in range(len(contig_df))]
             df.append(contig_df)
+            contig_number += 1 
+
         df = pd.concat(df)
         
         obj = cls()
@@ -112,7 +114,7 @@ class GenBankFile():
             f.write('##gff-version  3\n')
         
         cols = ['contig_id', 'model', 'feature_type', 'start', 'stop', 'score', 'strand', 'frame', 'description']
-        gff_df = self.df.copy()
+        gff_df = self.to_df()
         gff_df['model'] = model
         gff_df['feature_type'] = 'CDS'
         gff_df['start'] = gff_df.start + 1
@@ -123,13 +125,14 @@ class GenBankFile():
         gff_df['description'] = [f'ID={gene_id}' for gene_id in self.df.gene_id]
         gff_df = gff_df[cols].copy()
         gff_df.to_csv(path, header=None, sep='\t', index=False, mode='a') # Append to the file which already has the header. 
-        
+
 
     def to_df(self):
         df = self.df.copy()
+        df = df.set_index('gene_id')
         df['strand'] = ['-' if ('comp' in coordinate) else '+' for coordinate in  df.coordinate]
-        df['stop'] = [int(re.search(r'\.\.(\d+)', coordinate).group(1)) for coordinate in df.coordinate]
-        df['start'] = [int(re.search(r'(\d+)\.\.', coordinate).group(1)) for coordinate in df.coordinate]
+        df['stop'] = [int(re.search(r'\.\.[<>]*(\d+)', coordinate).group(1)) for coordinate in df.coordinate]
+        df['start'] = [int(re.search(r'(\d+)[<>]*\.\.', coordinate).group(1)) for coordinate in df.coordinate]
         return df
 
     # def to_fasta(path:str):

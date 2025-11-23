@@ -7,7 +7,13 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 import pandas as pd 
 import numpy as np 
+import subprocess
 
+
+def fasta_count_sequences(path:str):
+    cmd = f'cat {path} | grep -o ">" | wc -l'
+    result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
+    return int(result.stdout)
 
 def _parse_prodigal_description(description:str):
     pattern = r'# ([\d]+) # ([\d]+) # ([-1]+) # ID=([^;]+);partial=([^;]+);start_type=([^;]+);rbs_motif=([^;]+);rbs_spacer=([^;]+);gc_cont=([\.\w]+)'

@@ -1,4 +1,8 @@
 import os
+import skbio
+import pandas as pd
+import glob 
+import numpy as np 
 
 # Generate a script to submit the transcript-mapping jobs on Biotite. 
 
@@ -26,6 +30,7 @@ sample_name_map['SR-VP_Bioreactor_N_mid_05_17_2025_metaT'] = 'n_middle_2025'
 sample_name_map['SR-VP_Bioreactor_N_top_05_06_2024_metaT'] = 'n_top_2024'
 sample_name_map['SR-VP_Bioreactor_N_top_05_17_2025_metaT'] = 'n_top_2025'
 
+ece_id = 'ece_26_1334'
 ref_paths = ['../data/methanoperedens_1.fn', '../data/methanoperedens_2.fn', f'../data/{ece_id}.fn']
 output_dir = '../data/metat/'
 
@@ -52,6 +57,39 @@ def get_counting_command(bam_path:str, ref_path:str=None, output_dir:str=output_
 
 def get_sbatch_command(cmd, job_name:str=None):
     return f'sbatch --wrap "{cmd}" --output ../slurm.out/{job_name}.out'
+
+
+def metat_add_pseudocounts(metat_df:pd.DataFrame):
+    '''Want to make sure to add pseudocounts based on everything in a sample, not just a particular organism!'''
+    modified_metat_df = list()
+    for _, df in metat_df.groupby('sample_name', group_keys=False):
+        df['read_count_original'] = df.read_count.values # Mark the read counts which were corrected. 
+        n = df.read_count.sum()
+        df['read_count'] = skbio.stats.composition.multi_replace(df.read_count.values) * n
+        modified_metat_df.append(df)
+    return pd.concat(modified_metat_df)
+
+
+def metat_load(metat_dir:str='../data/metat', read_length:int=150):
+
+    metat_df = list()
+    for path in glob.glob(os.path.join(metat_dir, '*read_counts')):
+        file_name = os.path.basename(path)
+        sample_name, target_name = file_name.replace('_read_counts', '').split('-')
+        df = pd.read_csv(path, sep='\t', comment='#')
+        columns = df.columns.tolist()
+        columns[-1] = 'read_count'
+        df.columns = [col.lower() for col in columns]
+        df = df.rename(columns={'end':'stop', 'chr':'contig_id', 'geneid':'gene_id'})
+        df['sample_name'] = sample_name
+        df['target_name'] = target_name
+        metat_df.append(df)
+    metat_df = pd.concat(metat_df).reset_index(drop=True)
+    metat_df = metat_add_pseudocounts(metat_df)
+    metat_df['coverage'] = read_length * metat_df.read_count / metat_df.length  
+    # There should be one entry for each gene ID per sample. 
+    # assert np.all(metat_df.value_counts(['sample_name', 'gene_id']) == 1), 'load_transcriptome_data: The gene IDs are not unique.'
+    return metat_df
 
 # i = 0 
 

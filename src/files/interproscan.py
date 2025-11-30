@@ -22,5 +22,8 @@ class InterProScanFileTSV():
         return obj 
 
     def to_df(self):
-        return self.df.copy()
+        df = self.df.copy()
+        df['e_value'] = df.e_value.replace('-', np.nan)
+        df['e_value'] = pd.to_numeric(df.e_value)
+        return df
 

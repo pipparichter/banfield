@@ -8,6 +8,44 @@ from tqdm import tqdm
 import io
 import json 
 import time
+from Bio.PDB import PDBParser, PDBIO, Select
+
+# https://biopython.org/docs/1.75/api/Bio.PDB.PDBIO.html?highlight=select#Bio.PDB.PDBIO.Select
+
+def fold_trim_structure(input_path:str, min_b_score:float=0.7, max_gap:int=10, min_length:int=15, save:bool=True):
+    parser = PDBParser(QUIET=True)
+    structure = parser.get_structure(os.path.basename(input_path), input_path)
+
+    scores = np.array([np.mean([atom.get_bfactor() for atom in residue]) for residue in structure.get_residues()])
+    mask = ''.join((scores > min_b_score).astype(int).astype(str))
+
+    gap_pattern = '0{0,' + str(max_gap) + '}'
+    span_pattern = f'(?=(1(?:{gap_pattern}1)+))' 
+    best_start, best_stop = 0, 0
+
+    for span_match in re.finditer(span_pattern, mask):
+
+        start, stop = span_match.start(1), span_match.end(1)
+        if (stop - start) > (best_stop - best_start):
+            best_start, best_stop = start, stop
+
+    residues = list(range(best_start + 1, best_stop + 1))
+    if len(residues) < min_length:
+        return 
+    
+    print(f'fold_trim_structure: Kept {len(residues)} out of {len(list(structure.get_residues()))} residues from {input_path}.')
+    # print(f'fold_trim_structure: {', '.join([str(r) for r in residues])}.')
+
+    class ResidueFilter(Select):
+        def accept_residue(self, residue):
+            return (residue.id[1] in residues)
+    
+    if save:
+        output_path = os.path.basename(input_path).split('.')[0]
+        output_path = os.path.join(os.path.dirname(input_path), output_path + '_trimmed.pdb')
+        pdb = PDBIO()
+        pdb.set_structure(structure)
+        pdb.save(output_path, ResidueFilter())
 
 
 esm_valid_tokens = {'C', 'D', 'T', 'X', 'E', 'Z', 'H', 'M', 'N', 'L', 'S', 'A', 'P', 'G', 'V', 'W', 'F', 'R', 'Y', 'B', 'J', 'K', 'Q', 'I'}

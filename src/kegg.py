@@ -5,6 +5,27 @@ import numpy as np
 import re
 from tqdm import tqdm
 
+def kegg_load(path:str):
+    '''Load in a KEGG annotation file.'''
+    asterisk = list()
+    cols = ['id', 'ko', 'threshold', 'score', 'e_value', 'definition']
+    pattern = r'\s+([^\s]+)\s+(K\d{5})\s{1,}([^\s]+)\s{1,}([^\s]+)\s+([^\s]+)\s+(.+)'
+
+    df = list()
+    with open(path, 'r') as f:
+        for line in f.readlines():
+            if line.startswith('#'):
+                continue 
+            asterisk += [line.startswith('*')]
+            line = line[1:]
+            match_ = re.search(pattern, line)
+            df += [dict([(cols[i], match_.group(i + 1)) for i in range(len(cols))])]
+    df = pd.DataFrame(df)
+    df['*'] = asterisk 
+    df['definition'] = df.definition.str.strip()
+    df['e_value'] = pd.to_numeric(df.e_value)
+    return df 
+
 def kegg_get_pathways_by_ko(kos, path:str='../data/kegg/pathways.tsv'):
     kos = [kos[i:i + 10] for i in range(0, len(kos), 10)] # Split into chunks to speed things up. 
     if not os.path.exists(path):

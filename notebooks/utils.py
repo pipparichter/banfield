@@ -18,6 +18,14 @@ get_phylum = lambda taxonomy : re.search('p__([^;]+)', taxonomy).group(1) if (re
 get_family = lambda taxonomy : re.search('f__([^;]+)', taxonomy).group(1) if (re.search('f__([^;]+)', taxonomy) is not None) else 'none'
 get_class = lambda taxonomy : re.search('c__([^;]+)', taxonomy).group(1) if (re.search('c__([^;]+)', taxonomy) is not None) else 'none'
 
+level_funcs = dict()
+level_funcs['genus'] = get_genus
+level_funcs['domain'] = get_domain
+level_funcs['species'] = get_species
+level_funcs['order'] = get_order
+level_funcs['phylum'] = get_phylum
+level_funcs['family'] = get_family
+level_funcs['class'] = get_class
 
 def load_metadata(path:str='../data/bin_metadata.csv'):
     metadata_df = pd.read_csv(path)
@@ -29,6 +37,10 @@ def load_metadata(path:str='../data/bin_metadata.csv'):
     metadata_df['location'] = [re.search('(top|bottom|middle)', col).group(1) for col in metadata_df.column_name]
 
     metadata_df = metadata_df.set_index('genome_id')
+
+    for level, level_func in level_funcs.items():
+        metadata_df[level] = metadata_df.taxonomy.apply(level_func)
+
     return metadata_df
 
 

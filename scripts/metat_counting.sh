@@ -1,30 +1,40 @@
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/ck_bottom_2024-methanoperedens_1_read_counts ../data/metat/ck_bottom_2024-methanoperedens_1.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/ck_bottom_2025-methanoperedens_1_read_counts ../data/metat/ck_bottom_2025-methanoperedens_1.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/ck_middle_2025-methanoperedens_1_read_counts ../data/metat/ck_middle_2025-methanoperedens_1.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/ck_top_2025-methanoperedens_1_read_counts ../data/metat/ck_top_2025-methanoperedens_1.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_bottom_2024-methanoperedens_1_read_counts ../data/metat/n_bottom_2024-methanoperedens_1.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_bottom_2025-methanoperedens_1_read_counts ../data/metat/n_bottom_2025-methanoperedens_1.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_top_2024-methanoperedens_1_read_counts ../data/metat/n_top_2024-methanoperedens_1.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_top_2025-methanoperedens_1_read_counts ../data/metat/n_top_2025-methanoperedens_1.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_middle_2024-methanoperedens_1_read_counts ../data/metat/n_middle_2024-methanoperedens_1.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_middle_2025-methanoperedens_1_read_counts ../data/metat/n_middle_2025-methanoperedens_1.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/ck_bottom_2024-methanoperedens_2_read_counts ../data/metat/ck_bottom_2024-methanoperedens_2.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/ck_bottom_2025-methanoperedens_2_read_counts ../data/metat/ck_bottom_2025-methanoperedens_2.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/ck_middle_2025-methanoperedens_2_read_counts ../data/metat/ck_middle_2025-methanoperedens_2.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/ck_top_2025-methanoperedens_2_read_counts ../data/metat/ck_top_2025-methanoperedens_2.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_bottom_2024-methanoperedens_2_read_counts ../data/metat/n_bottom_2024-methanoperedens_2.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_bottom_2025-methanoperedens_2_read_counts ../data/metat/n_bottom_2025-methanoperedens_2.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_top_2024-methanoperedens_2_read_counts ../data/metat/n_top_2024-methanoperedens_2.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_top_2025-methanoperedens_2_read_counts ../data/metat/n_top_2025-methanoperedens_2.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_middle_2024-methanoperedens_2_read_counts ../data/metat/n_middle_2024-methanoperedens_2.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_middle_2025-methanoperedens_2_read_counts ../data/metat/n_middle_2025-methanoperedens_2.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/ck_bottom_2024-ece_26_1334_read_counts ../data/metat/ck_bottom_2024-ece_26_1334.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/ck_bottom_2025-ece_26_1334_read_counts ../data/metat/ck_bottom_2025-ece_26_1334.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/ck_middle_2025-ece_26_1334_read_counts ../data/metat/ck_middle_2025-ece_26_1334.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/ck_top_2025-ece_26_1334_read_counts ../data/metat/ck_top_2025-ece_26_1334.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_bottom_2024-ece_26_1334_read_counts ../data/metat/n_bottom_2024-ece_26_1334.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_bottom_2025-ece_26_1334_read_counts ../data/metat/n_bottom_2025-ece_26_1334.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_top_2024-ece_26_1334_read_counts ../data/metat/n_top_2024-ece_26_1334.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_top_2025-ece_26_1334_read_counts ../data/metat/n_top_2025-ece_26_1334.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_middle_2024-ece_26_1334_read_counts ../data/metat/n_middle_2024-ece_26_1334.bam
-featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_middle_2025-ece_26_1334_read_counts ../data/metat/n_middle_2025-ece_26_1334.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/ck_bottom_2024-methanoperedens_1_read_counts ../data/metat/ck_bottom_2024-methanoperedens_1.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/ck_bottom_2025-methanoperedens_1_read_counts ../data/metat/ck_bottom_2025-methanoperedens_1.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/ck_middle_2025-methanoperedens_1_read_counts ../data/metat/ck_middle_2025-methanoperedens_1.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/ck_top_2025-methanoperedens_1_read_counts ../data/metat/ck_top_2025-methanoperedens_1.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_bottom_2024-methanoperedens_1_read_counts ../data/metat/n_bottom_2024-methanoperedens_1.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_bottom_2025-methanoperedens_1_read_counts ../data/metat/n_bottom_2025-methanoperedens_1.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_top_2024-methanoperedens_1_read_counts ../data/metat/n_top_2024-methanoperedens_1.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_top_2025-methanoperedens_1_read_counts ../data/metat/n_top_2025-methanoperedens_1.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_middle_2024-methanoperedens_1_read_counts ../data/metat/n_middle_2024-methanoperedens_1.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_1.gff -s 2 -o ../data/metat/n_middle_2025-methanoperedens_1_read_counts ../data/metat/n_middle_2025-methanoperedens_1.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/ck_bottom_2024-methanoperedens_2_read_counts ../data/metat/ck_bottom_2024-methanoperedens_2.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/ck_bottom_2025-methanoperedens_2_read_counts ../data/metat/ck_bottom_2025-methanoperedens_2.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/ck_middle_2025-methanoperedens_2_read_counts ../data/metat/ck_middle_2025-methanoperedens_2.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/ck_top_2025-methanoperedens_2_read_counts ../data/metat/ck_top_2025-methanoperedens_2.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_bottom_2024-methanoperedens_2_read_counts ../data/metat/n_bottom_2024-methanoperedens_2.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_bottom_2025-methanoperedens_2_read_counts ../data/metat/n_bottom_2025-methanoperedens_2.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_top_2024-methanoperedens_2_read_counts ../data/metat/n_top_2024-methanoperedens_2.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_top_2025-methanoperedens_2_read_counts ../data/metat/n_top_2025-methanoperedens_2.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_middle_2024-methanoperedens_2_read_counts ../data/metat/n_middle_2024-methanoperedens_2.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/methanoperedens_2.gff -s 2 -o ../data/metat/n_middle_2025-methanoperedens_2_read_counts ../data/metat/n_middle_2025-methanoperedens_2.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/ck_bottom_2024-ece_26_1334_read_counts ../data/metat/ck_bottom_2024-ece_26_1334.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/ck_bottom_2025-ece_26_1334_read_counts ../data/metat/ck_bottom_2025-ece_26_1334.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/ck_middle_2025-ece_26_1334_read_counts ../data/metat/ck_middle_2025-ece_26_1334.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/ck_top_2025-ece_26_1334_read_counts ../data/metat/ck_top_2025-ece_26_1334.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_bottom_2024-ece_26_1334_read_counts ../data/metat/n_bottom_2024-ece_26_1334.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_bottom_2025-ece_26_1334_read_counts ../data/metat/n_bottom_2025-ece_26_1334.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_top_2024-ece_26_1334_read_counts ../data/metat/n_top_2024-ece_26_1334.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_top_2025-ece_26_1334_read_counts ../data/metat/n_top_2025-ece_26_1334.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_middle_2024-ece_26_1334_read_counts ../data/metat/n_middle_2024-ece_26_1334.bam
+# featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334.gff -s 2 -o ../data/metat/n_middle_2025-ece_26_1334_read_counts ../data/metat/n_middle_2025-ece_26_1334.bam
+featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334_rev.gff -s 2 -o ../data/metat/ck_bottom_2024-ece_26_1334_rev_read_counts ../data/metat/ck_bottom_2024-ece_26_1334.bam
+featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334_rev.gff -s 2 -o ../data/metat/ck_bottom_2025-ece_26_1334_rev_read_counts ../data/metat/ck_bottom_2025-ece_26_1334.bam
+featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334_rev.gff -s 2 -o ../data/metat/ck_middle_2025-ece_26_1334_rev_read_counts ../data/metat/ck_middle_2025-ece_26_1334.bam
+featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334_rev.gff -s 2 -o ../data/metat/ck_top_2025-ece_26_1334_rev_read_counts ../data/metat/ck_top_2025-ece_26_1334.bam
+featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334_rev.gff -s 2 -o ../data/metat/n_bottom_2024-ece_26_1334_rev_read_counts ../data/metat/n_bottom_2024-ece_26_1334.bam
+featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334_rev.gff -s 2 -o ../data/metat/n_bottom_2025-ece_26_1334_rev_read_counts ../data/metat/n_bottom_2025-ece_26_1334.bam
+featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334_rev.gff -s 2 -o ../data/metat/n_top_2024-ece_26_1334_rev_read_counts ../data/metat/n_top_2024-ece_26_1334.bam
+featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334_rev.gff -s 2 -o ../data/metat/n_top_2025-ece_26_1334_rev_read_counts ../data/metat/n_top_2025-ece_26_1334.bam
+featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334_rev.gff -s 2 -o ../data/metat/n_middle_2024-ece_26_1334_rev_read_counts ../data/metat/n_middle_2024-ece_26_1334.bam
+featureCounts -p -T 64 -g ID -t CDS -a ../data/ece_26_1334_rev.gff -s 2 -o ../data/metat/n_middle_2025-ece_26_1334_rev_read_counts ../data/metat/n_middle_2025-ece_26_1334.bam

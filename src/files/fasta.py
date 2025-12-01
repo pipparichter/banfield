@@ -15,6 +15,7 @@ def fasta_count_sequences(path:str):
     result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
     return int(result.stdout)
 
+
 def _parse_prodigal_description(description:str):
     pattern = r'# ([\d]+) # ([\d]+) # ([-1]+) # ID=([^;]+);partial=([^;]+);start_type=([^;]+);rbs_motif=([^;]+);rbs_spacer=([^;]+);gc_cont=([\.\w]+)'
     columns = ['start', 'stop', 'strand', 'ID', 'partial', 'start_type', 'rbs_motif', 'rbs_spacer', 'gc_content']
@@ -123,6 +124,14 @@ class FASTAFile():
             records.append(record)
         SeqIO.write(records, f, 'fasta')
         f.close()
+
+def fasta_get_contig_sizes(path:str) -> dict:
+    fasta_file = FASTAFile.from_file(path)
+    contig_sizes = dict(list(zip(fasta_file.ids, fasta_file.seqs)))
+    return {contig_id:len(seq) for contig_id, seq in contig_sizes.items()}
+
+def fasta_get_genome_size(path:str) -> int:
+    return sum(list(fasta_get_contig_sizes(path).values()))
 
 
 

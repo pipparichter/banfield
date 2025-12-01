@@ -12,7 +12,7 @@ from Bio.PDB import PDBParser, PDBIO, Select
 
 # https://biopython.org/docs/1.75/api/Bio.PDB.PDBIO.html?highlight=select#Bio.PDB.PDBIO.Select
 
-def fold_trim_structure(input_path:str, min_b_score:float=0.7, max_gap:int=10, min_length:int=15, save:bool=True):
+def fold_trim_structure(input_path:str, output_path:str=None, min_b_score:float=0.7, max_gap:int=10, min_length:int=15, save:bool=True):
     parser = PDBParser(QUIET=True)
     structure = parser.get_structure(os.path.basename(input_path), input_path)
 
@@ -41,8 +41,9 @@ def fold_trim_structure(input_path:str, min_b_score:float=0.7, max_gap:int=10, m
             return (residue.id[1] in residues)
     
     if save:
-        output_path = os.path.basename(input_path).split('.')[0]
-        output_path = os.path.join(os.path.dirname(input_path), output_path + '_trimmed.pdb')
+        if output_path is None:
+            output_path = os.path.basename(input_path).split('.')[0]
+            output_path = os.path.join(os.path.dirname(input_path), output_path + '_trimmed.pdb')
         pdb = PDBIO()
         pdb.set_structure(structure)
         pdb.save(output_path, ResidueFilter())
@@ -64,7 +65,7 @@ def fold_esm(path:str, output_dir:str='../data/structures/esmfold/'):
     name = os.path.basename(path).split('.')[0]
 
     for id_, sequence in tqdm(list(zip(fasta_file.ids, fasta_file.seqs)), desc='fold_esm'):
-        path = os.path.join(output_dir, f'{name}_{id_}.pdb')
+        path = os.path.join(output_dir, f'{id_}.pdb')
         if os.path.exists(path):
             continue
         sequence = sequence.replace('*', '').strip()

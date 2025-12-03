@@ -6,33 +6,27 @@ import numpy as np
 
 # Generate a script to submit the transcript-mapping jobs on Biotite. 
 
-sample_paths = list()
-sample_paths = ['/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_bot_05_06_2024_metaT']
-sample_paths += ['/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_bot_05_17_2025_metaT']
-sample_paths += ['/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_mid_05_17_2025_metaT']
-sample_paths += ['/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_top_05_17_2025_metaT']
-sample_paths += ['/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_bot_05_06_2024_metaT']
-sample_paths += ['/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_bot_05_17_2025_metaT']
-sample_paths += ['/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_top_05_06_2024_metaT']
-sample_paths += ['/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_top_05_17_2025_metaT']
-sample_paths += ['/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_mid_05_06_2024_metaT']
-sample_paths += ['/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_mid_05_17_2025_metaT']
 
-sample_name_map = dict()
-sample_name_map['SR-VP_Bioreactor_ck_bot_05_06_2024_metaT'] = 'ck_bottom_2024'
-sample_name_map['SR-VP_Bioreactor_ck_bot_05_17_2025_metaT'] = 'ck_bottom_2025'
-sample_name_map['SR-VP_Bioreactor_ck_mid_05_17_2025_metaT'] = 'ck_middle_2025'
-sample_name_map['SR-VP_Bioreactor_ck_top_05_17_2025_metaT'] = 'ck_top_2025'
-sample_name_map['SR-VP_Bioreactor_N_bot_05_06_2024_metaT'] = 'n_bottom_2024'
-sample_name_map['SR-VP_Bioreactor_N_bot_05_17_2025_metaT'] = 'n_bottom_2025'
-sample_name_map['SR-VP_Bioreactor_N_mid_05_06_2024_metaT'] = 'n_middle_2024'
-sample_name_map['SR-VP_Bioreactor_N_mid_05_17_2025_metaT'] = 'n_middle_2025'
-sample_name_map['SR-VP_Bioreactor_N_top_05_06_2024_metaT'] = 'n_top_2024'
-sample_name_map['SR-VP_Bioreactor_N_top_05_17_2025_metaT'] = 'n_top_2025'
+sample_name_map = {
+    'ck_bottom_2024': 'SR-VP_Bioreactor_ck_bot_05_06_2024_metaT',
+    
+    'ck_bottom_2025': 'SR-VP_Bioreactor_ck_bot_05_17_2025_metaT',
+    'ck_middle_2025': 'SR-VP_Bioreactor_ck_mid_05_17_2025_metaT',
+    'ck_top_2025': 'SR-VP_Bioreactor_ck_top_05_17_2025_metaT',
+
+    'n_bottom_2025': 'SR-VP_Bioreactor_N_bot_05_17_2025_metaT',
+    'n_middle_2025': 'SR-VP_Bioreactor_N_mid_05_17_2025_metaT',
+    'n_top_2025': 'SR-VP_Bioreactor_N_top_05_17_2025_metaT',
+    
+    'n_top_2024': 'SR-VP_Bioreactor_N_top_05_06_2024_metaT',
+    'n_bottom_2024': 'SR-VP_Bioreactor_N_bot_05_06_2024_metaT',
+    'n_middle_2024': 'SR-VP_Bioreactor_N_mid_05_06_2024_metaT'}
+
+input_path_template = '/groups/banfield/sequences/2025/{sample_name}/raw.d/{sample_name}_trim_clean.{paired_end}.fastq.gz'
 
 ece_id = 'ece_26_1334'
-ref_paths = ['../data/methanoperedens_1.fn', '../data/methanoperedens_2.fn', f'../data/{ece_id}.fn']
-output_dir = '../data/metat/'
+ref_paths = ['/home/philippar/data/methanoperedens_1.fn', '/home/philippar/data/methanoperedens_2.fn', f'/home/philippar/data/{ece_id}.fn']
+output_dir = '/home/philippar/data/metat/'
 
 def get_mapping_command(sample_path:str, ref_path:str=None, output_dir:str=output_dir):
     # TODO: Should look into what paired-end reads are and how that works experimentally. 
@@ -61,13 +55,13 @@ def get_sbatch_command(cmd, job_name:str=None):
 
 def metat_add_pseudocounts(metat_df:pd.DataFrame):
     '''Want to make sure to add pseudocounts based on everything in a sample, not just a particular organism!'''
-    modified_metat_df = list()
+    modified_df = list()
     for _, df in metat_df.groupby('sample_name', group_keys=False):
         df['read_count_original'] = df.read_count.values # Mark the read counts which were corrected. 
         n = df.read_count.sum()
         df['read_count'] = skbio.stats.composition.multi_replace(df.read_count.values) * n
-        modified_metat_df.append(df)
-    return pd.concat(modified_metat_df)
+        modified_df.append(df)
+    return pd.concat(modified_df)
 
 
 def metat_load(metat_dir:str='../data/metat', read_length:int=150):

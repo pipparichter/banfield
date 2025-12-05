@@ -7,52 +7,6 @@ import numpy as np
 # Generate a script to submit the transcript-mapping jobs on Biotite. 
 
 
-sample_name_map = {
-    'ck_bottom_2024': 'SR-VP_Bioreactor_ck_bot_05_06_2024_metaT',
-    
-    'ck_bottom_2025': 'SR-VP_Bioreactor_ck_bot_05_17_2025_metaT',
-    'ck_middle_2025': 'SR-VP_Bioreactor_ck_mid_05_17_2025_metaT',
-    'ck_top_2025': 'SR-VP_Bioreactor_ck_top_05_17_2025_metaT',
-
-    'n_bottom_2025': 'SR-VP_Bioreactor_N_bot_05_17_2025_metaT',
-    'n_middle_2025': 'SR-VP_Bioreactor_N_mid_05_17_2025_metaT',
-    'n_top_2025': 'SR-VP_Bioreactor_N_top_05_17_2025_metaT',
-    
-    'n_top_2024': 'SR-VP_Bioreactor_N_top_05_06_2024_metaT',
-    'n_bottom_2024': 'SR-VP_Bioreactor_N_bot_05_06_2024_metaT',
-    'n_middle_2024': 'SR-VP_Bioreactor_N_mid_05_06_2024_metaT'}
-
-input_path_template = '/groups/banfield/sequences/2025/{sample_name}/raw.d/{sample_name}_trim_clean.{paired_end}.fastq.gz'
-
-ece_id = 'ece_26_1334'
-ref_paths = ['/home/philippar/data/methanoperedens_1.fn', '/home/philippar/data/methanoperedens_2.fn', f'/home/philippar/data/{ece_id}.fn']
-output_dir = '/home/philippar/data/metat/'
-
-def get_mapping_command(sample_path:str, ref_path:str=None, output_dir:str=output_dir):
-    # TODO: Should look into what paired-end reads are and how that works experimentally. 
-
-    target_name = os.path.basename(ref_path).replace('.fn', '')
-    sample_name = os.path.basename(sample_path)
-    input_path_1 = os.path.join(sample_path, 'raw.d', f'{sample_name}_trim_clean.PE.1.fastq.gz')
-    input_path_2 = os.path.join(sample_path, 'raw.d', f'{sample_name}_trim_clean.PE.2.fastq.gz')
-    output_path = os.path.join(output_dir, f'{sample_name_map[sample_name]}-{target_name}.bam')
-
-    params = 'pigz=t unpigz=t ambiguous=random minid=0.96 idfilter=0.97 threads=64 out=stdout.sam editfilter=5 out=stdout.sam'
-    cmd = f'bbmap.sh {params} in1={input_path_1} in2={input_path_2} ref={ref_path} nodisk | shrinksam | sambam > {output_path}'
-    return cmd, output_path
-
-
-def get_counting_command(bam_path:str, ref_path:str=None, output_dir:str=output_dir):
-    output_file_name = os.path.basename(bam_path).replace('.bam', '')
-    output_file_name += '_read_counts'
-    output_path = os.path.join(output_dir, output_file_name)
-    return f'featureCounts -p -T 64 -g ID -t CDS -a {ref_path} -s 2 -o {output_path} {bam_path}' 
-
-
-def get_sbatch_command(cmd, job_name:str=None):
-    return f'sbatch --wrap "{cmd}" --output ../slurm.out/{job_name}.out'
-
-
 def metat_add_pseudocounts(metat_df:pd.DataFrame):
     '''Want to make sure to add pseudocounts based on everything in a sample, not just a particular organism!'''
     modified_df = list()
@@ -85,21 +39,32 @@ def metat_load(metat_dir:str='../data/metat', read_length:int=150):
     # assert np.all(metat_df.value_counts(['sample_name', 'gene_id']) == 1), 'load_transcriptome_data: The gene IDs are not unique.'
     return metat_df
 
-# i = 0 
 
-# mapping_path, counting_path = '../scripts/metat_mapping.sh', '../scripts/metat_counting.sh'
-# mapping, counting = list(), list()
-# for ref_path in ref_paths:
-#     for sample_path in sample_paths:
-#         mapping_command, bam_path = get_mapping_command(sample_path, ref_path=ref_path)
-#         counting_command = get_counting_command(bam_path, ref_path=ref_path.replace('fn', 'gff'))
-#         mapping.append(get_sbatch_command(mapping_command, job_name=i))
-#         counting.append(counting_command)
+def _metat_load_summary(path:str):
+    # The summary file only includes the mapped reads in the BAM file, so the total reads mapped to the provided reference genome. 
+    # Therefore, these cannot be used to compute RPKM. 
+    file_name = os.path.basename(path).replace('_read_counts.summary', '')
+    sample_name, target_name = file_name.split('-')
+    cols = dict()
+    # cols['Status'] = 'bam_file'
+    cols['Assigned'] = 'n_assigned'
+    cols['Unassigned_Unmapped'] = 'n_unassigned_unmapped' # Could not be mapped to the reference. 
+    cols['Unassigned_NoFeatures'] = 'n_unassigned_no_features' # Mapped, but could not be assigned to a feature. 
+    cols['Unassigned_Ambiguity'] = 'n_unassigned_ambiguity'
+    df = pd.read_csv(path, sep=r'\s+', index_col=0).T.reset_index(drop=True)
+    df.columns.name = ''
+    df = df[list(cols.keys())].copy()
+    df = df.rename(columns=cols)
+    df['target_name'] = target_name 
+    df['sample_name'] = sample_name
+    return df 
 
-#         i += 1
+def metat_load_summary(data_dir='../data/metat/'):
+    metat_summary_df = list()
+    for path in glob.glob(os.path.join(data_dir, '*summary')):
+        metat_summary_df.append(_metat_load_summary(path))
+    metat_summary_df = pd.concat(metat_summary_df)
+    metat_summary_df['total'] = metat_summary_df.n_unassigned_ambiguity + metat_summary_df.n_assigned + metat_summary_df.n_unassigned_no_features
+    return metat_summary_df
 
-# with open(mapping_path, 'w') as f:
-#     f.write('\n'.join(mapping))
 
-# with open(counting_path, 'w') as f:
-#     f.write('\n'.join(counting))

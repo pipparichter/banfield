@@ -5,6 +5,7 @@ import numpy as np
 import re
 from tqdm import tqdm
 
+
 def kegg_load(path:str):
     '''Load in a KEGG annotation file.'''
     asterisk = list()

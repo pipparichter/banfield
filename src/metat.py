@@ -3,8 +3,17 @@ import skbio
 import pandas as pd
 import glob 
 import numpy as np 
+from src.bbduk import bbduk_load
 
-# Generate a script to submit the transcript-mapping jobs on Biotite. 
+
+def metat_add_library_size(metat_df, bbduk_data_dir='../data/bbduk'):
+    bbduk_df = bbduk_load(bbduk_data_dir)
+    bbduk_df = bbduk_df[bbduk_df.index.str.contains('metat')].copy()
+    bbduk_df.index = bbduk_df.index.str.replace('_metat', '') # Remove the metat suffix from the sample name. 
+    metat_df['library_size'] = metat_df.sample_name.map(bbduk_df.library_size)
+    # RPKM is reads per kilobase of transcript per Million mapped reads
+    # metat_df['rpkm'] = (metat_df['count'] / (metat_df['contig_size'] / 1e3)) / (metat_df.library_size / 1e6)
+    return metat_df
 
 
 def metat_add_pseudocounts(metat_df:pd.DataFrame):

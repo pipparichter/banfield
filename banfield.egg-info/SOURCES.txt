@@ -4,7 +4,14 @@ banfield.egg-info/SOURCES.txt
 banfield.egg-info/dependency_links.txt
 banfield.egg-info/top_level.txt
 src/__init__.py
+src/bbduk.py
+src/coverm.py
+src/fold.py
+src/foldseek.py
 src/ggkbase.py
+src/kegg.py
+src/metat.py
+src/data/sample_metadata.csv
 src/files/__init__.py
 src/files/blast.py
 src/files/fasta.py

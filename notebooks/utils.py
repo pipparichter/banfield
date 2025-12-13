@@ -3,6 +3,7 @@ import pandas as pd
 import os 
 import glob
 from src.files import fasta_get_contig_sizes, fasta_get_genome_size
+from src.coverm import * 
 import numpy as np 
 
 
@@ -10,7 +11,7 @@ id_to_ggkbase_name_map = {}
 id_to_ggkbase_name_map['mp_4'] = 'SR-VP_11_27_2022_S1_80cm_Methanoperedens_44_5'
 id_to_ggkbase_name_map['mp_1'] = 'SR-VP_05_06_2024_ck_bottom_Methanoperedens_44_47'
 id_to_ggkbase_name_map['mp_3'] = 'SR-VP_05_06_2024_N_top_Methanoperedens_44_14'
-id_to_ggkbase_name_map['mp_5'] = 'SR-VP_05_06_2024_N_top_Candidatus_Methanoperedens_Black-host_type_44_27'
+id_to_ggkbase_name_map['mp_5'] = 'SR-VP_05_06_2024_N_top_Candidatus_Methanoperedens_Black-host_type_44_27' # Confirmed with CRISPR spacer. Same strain as other assembly with CRISPR hit.
 id_to_ggkbase_name_map['mp_2'] = 'SR-VP_05_06_2024_ck_bottom_Methanoperedens_41_16'
 # All Borgs in the Vernal Pool bioreactor coassembly. 
 id_to_ggkbase_name_map['jupiter_mini_borg_1'] = 'SR-VP_05_06_2024_coassembly_Jupiter_mini-Borg_33_21'
@@ -57,8 +58,8 @@ id_to_ggkbase_name_map['linear_ece_19kb'] = 'Final_SR-VP_05_06_2024_coassembly_1
 ece_ggkbase_name = 'Final_SR-VP_05_06_2024_coassembly_19kb_linear_ECE_26_1334_complete'
 bb_ggkbase_name = 'SR-VP_05_06_2024_coassembly_Black_Borg_32_272'
 
-ece_id = 'ece_26_1334'
-mp_id = 'methanoperedens_2'
+ece_id = 'ece_19kb'
+mp_id = 'mp_5'
 
 get_genus = lambda taxonomy : re.search('g__([^;]+)', taxonomy).group(1) if (re.search('g__([^;]+)', taxonomy) is not None) else 'none'
 get_domain = lambda taxonomy : re.search('d__([^;]+)', taxonomy).group(1) if (re.search('d__([^;]+)', taxonomy) is not None) else 'none'
@@ -78,12 +79,9 @@ level_funcs['family'] = get_family
 level_funcs['class'] = get_class
 
 
-contig_sizes = fasta_get_contig_sizes('../data/methanoperedens_2.fn')
-# contig_sizes.update(fasta_get_contig_sizes('../data/ece_26_1334.fn'))
-
-genome_sizes = dict()
-genome_sizes['methanoperedens_2']= fasta_get_genome_size('../data/methanoperedens_2.fn') 
-genome_sizes['ece_26_1334'] = fasta_get_genome_size('../data/ece_26_1334.fn')
+contig_sizes = dict()
+for ggkbase_name in id_to_ggkbase_name_map.values():
+    contig_sizes.update(fasta_get_contig_sizes(f'../data/ggkbase/contigs/{ggkbase_name}.contigs.fa'))
 
 
 def bbduk_load(data_dir='../data/bbduk'):
@@ -106,56 +104,6 @@ def metat_add_library_size(metat_df, bbduk_data_dir='../data/bbduk'):
     # metat_df['rpkm'] = (metat_df['count'] / (metat_df['contig_size'] / 1e3)) / (metat_df.library_size / 1e6)
     return metat_df
 
-
-def coverm_add_library_size(coverm_df, bbduk_data_dir='../data/bbduk'):
-    bbduk_df = bbduk_load(bbduk_data_dir)
-    bbduk_df = bbduk_df[~bbduk_df.index.str.contains('metat')].copy()
-    coverm_df['library_size'] = coverm_df.sample_id.map(bbduk_df.library_size)
-    return coverm_df
-
-
-def coverm_group_targets(coverm_df:pd.DataFrame):
-    sample_df = coverm_df[coverm_df.sample_id == coverm_df.sample_id.values[0]].copy() # Get the coverage for a single sample. 
-    coverm_df = coverm_df.copy()
-
-    coverm_df['genome_size'] = coverm_df.target_name.map(sample_df.groupby('target_name').contig_size.sum())
-    coverm_df['contig_weight'] = coverm_df.contig_size / coverm_df.genome_size 
-    # Weight each of the columns by contig size. 
-    coverm_df['variance'] = coverm_df['variance'] * coverm_df.contig_weight 
-    coverm_df['trimmed_mean'] = coverm_df['trimmed_mean'] * coverm_df.contig_weight 
-    coverm_df['mean'] = coverm_df['mean'] * coverm_df.contig_weight 
-
-    agg_funcs = dict()
-    # agg_funcs['rpkm'] = 'sum'
-    agg_funcs['variance'] = 'mean'
-    agg_funcs['mean'] = 'mean'
-    agg_funcs['trimmed_mean'] = 'mean'
-    agg_funcs['count'] = 'sum'
-    agg_funcs['genome_size'] = 'first'
-    agg_funcs['library_size'] = 'first'
-    
-    coverm_df = coverm_df.groupby(['sample_id', 'target_name']).agg(agg_funcs)
-    return coverm_df.reset_index()
-
-
-def coverm_load(data_dir='../data/coverm/', bbduk_data_dir='../data/bbduk'):
-    fields = 'mean trimmed_mean covered_bases variance count rpkm tpm'
-    cols = fields.split()
-    coverm_df = list()
-    for path in glob.glob(os.path.join(data_dir, '*')):
-        file_name = os.path.basename(path).replace('.tsv', '')
-        sample_id, target_name = file_name.split('-')
-        df = pd.read_csv(path, sep='\t', names=cols, skiprows=1)
-        df['sample_id'], df['target_name'] = sample_id, target_name
-        if len(df) > 0:
-            coverm_df.append(df)
-    coverm_df = pd.concat(coverm_df)
-    coverm_df['contig_size'] = coverm_df.index.map(contig_sizes)
-
-    coverm_df = coverm_add_library_size(coverm_df, bbduk_data_dir=bbduk_data_dir)
-    coverm_df = coverm_group_targets(coverm_df)
-    coverm_df['rpkm'] = (coverm_df['count'] / (coverm_df['genome_size'] / 1e3)) / (coverm_df.library_size / 1e6) # RPKM is reads per kilobase of transcript per million mapped reads. 
-    return coverm_df
 
 
 def load_metadata(path:str='../data/bin_metadata.csv'):

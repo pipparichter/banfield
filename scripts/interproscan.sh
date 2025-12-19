@@ -1,4 +1,0 @@
-sbatch --wrap "/shared/software/bin/interproscan.sh -i ../data/methanoperedens_1.fa -o ../data/interproscan/methanoperedens_1.tsv -f tsv" -o ../slurm.out/slurm-interproscan.out
-sbatch --wrap "/shared/software/bin/interproscan.sh -i ../data/methanoperedens_2.fa -o ../data/interproscan/methanoperedens_2.tsv -f tsv" -o ../slurm.out/slurm-interproscan.out
-sbatch --wrap "/shared/software/bin/interproscan.sh -i ../data/ece_26_1334.fa -o ../data/interproscan/ece_26_1334.tsv -f tsv" -o ../slurm.out/slurm-interproscan.out
-sbatch --wrap "/shared/software/bin/interproscan.sh -i ../data/ece_26_1334_all_orfs.fa -o ../data/interproscan/ece_26_1334_all_orfs.tsv -f tsv" -o ../slurm.out/slurm-interproscan.out

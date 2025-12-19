@@ -2,10 +2,16 @@ import re
 import pandas as pd 
 import os 
 import glob
-from src.files import fasta_get_contig_sizes, fasta_get_genome_size
+from src.files import fasta_get_contig_sizes, fasta_get_genome_size, InterProScanFileTSV
 from src.coverm import * 
 import numpy as np 
-
+from src.metat import *
+from src.bbduk import bbduk_load
+import seaborn as sns 
+from scipy.stats import gmean 
+from tqdm import tqdm
+import matplotlib.pyplot as plt
+import scipy 
 
 id_to_ggkbase_name_map = {}
 id_to_ggkbase_name_map['mp_4'] = 'SR-VP_11_27_2022_S1_80cm_Methanoperedens_44_5'
@@ -83,6 +89,8 @@ contig_sizes = dict()
 for ggkbase_name in id_to_ggkbase_name_map.values():
     contig_sizes.update(fasta_get_contig_sizes(f'../data/ggkbase/contigs/{ggkbase_name}.contigs.fa'))
 
+genome_sizes = {id_:fasta_get_genome_size(f'../data/ggkbase/contigs/{ggkbase_name}.contigs.fa') for id_, ggkbase_name in id_to_ggkbase_name_map.items()}
+
 
 def bbduk_load(data_dir='../data/bbduk'):
     bbduk_df = list()
@@ -104,6 +112,15 @@ def metat_add_library_size(metat_df, bbduk_data_dir='../data/bbduk'):
     # metat_df['rpkm'] = (metat_df['count'] / (metat_df['contig_size'] / 1e3)) / (metat_df.library_size / 1e6)
     return metat_df
 
+
+def load_interproscan(data_dir:str='../data/interproscan/'):
+    interproscan_df = list()
+    for path in glob.glob(os.path.join(data_dir, '*')):
+        df = InterProScanFileTSV.from_file(path).to_df()
+        df['target_name'] = os.path.basename(path).replace('.tsv', '')
+        interproscan_df.append(df)
+    interproscan_df = pd.concat(interproscan_df)
+    return interproscan_df
 
 
 def load_metadata(path:str='../data/bin_metadata.csv'):

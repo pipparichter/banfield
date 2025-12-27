@@ -56,7 +56,6 @@ class FASTAFile():
         f = open(path, 'r')
         obj.seqs, obj.ids, obj.descriptions = [], [], []
         for record in SeqIO.parse(path, 'fasta'):
-            # print(record.seq)
             obj.ids.append(record.id)
             obj.descriptions.append(record.description.replace(record.id, '').strip())
             obj.seqs.append(str(record.seq))

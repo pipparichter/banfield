@@ -6,7 +6,7 @@ import os
 
 class InterProScanFileTSV():
 
-    fields = ['id', 'md5', 'length', 'signature_analysis', 'signature_accession', 'signature_description', 'start', 'stop', 'e_value', 'status', 'date']
+    fields = ['id', 'md5', 'length', 'signature_analysis', 'signature_accession', 'signature_description', 'start', 'stop', 'e_value', 'status', 'date', 'interpro_accession', 'interpro_description']
 
     def __init__(self):
         pass 

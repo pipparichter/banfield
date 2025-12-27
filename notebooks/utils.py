@@ -2,7 +2,7 @@ import re
 import pandas as pd 
 import os 
 import glob
-from src.files import fasta_get_contig_sizes, fasta_get_genome_size, InterProScanFileTSV
+from src.files import *
 from src.coverm import * 
 import numpy as np 
 from src.metat import *
@@ -11,7 +11,14 @@ import seaborn as sns
 from scipy.stats import gmean 
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
+from src.kofamscan import *
+import requests 
 import scipy 
+import warnings 
+import json
+import itertools
+import subprocess
 
 id_to_ggkbase_name_map = {}
 id_to_ggkbase_name_map['mp_4'] = 'SR-VP_11_27_2022_S1_80cm_Methanoperedens_44_5'
@@ -24,7 +31,6 @@ id_to_ggkbase_name_map['jupiter_mini_borg_1'] = 'SR-VP_05_06_2024_coassembly_Jup
 id_to_ggkbase_name_map['jupiter_mini_borg_2'] = 'SR-VP_05_06_2024_coassembly_Jupiter_mini-Borg_32_5'
 id_to_ggkbase_name_map['jupiter_mini_borg_3'] = 'SR-VP_05_06_2024_coassembly_Jupiter_mini-Borg_34_1246'
 id_to_ggkbase_name_map['jupiter_mini_borg_4'] = 'SR-VP_05_06_2024_coassembly_Jupiter_mini-Borg_36_6'
-# id_to_ggkbase_name_map['jupiter_mini_borg_5'] = 'SR-VP_05_06_2024_coassembly_Jupiter_mini-Borg_38_3'
 id_to_ggkbase_name_map['jupiter_mini_borg_6'] = 'SR-VP_05_06_2024_coassembly_Jupiter_mini-Borg_35_3'
 id_to_ggkbase_name_map['jupiter_mini_borg_7'] = 'SR-VP_05_06_2024_coassembly_Jupiter_mini-Borg_33_6'
 id_to_ggkbase_name_map['jupiter_mini_borg_8'] = 'SR-VP_05_06_2024_coassembly_Jupiter_mini-Borg_31_4'
@@ -44,22 +50,11 @@ id_to_ggkbase_name_map['vermilion_borg'] = 'SR-VP_05_06_2024_coassembly_Vermilio
 id_to_ggkbase_name_map['mercury_mini_borg'] = 'SR-VP_05_06_2024_coassembly_Mercury_mini-Borg_37_9'
 id_to_ggkbase_name_map['saturn_mini_borg_like'] = 'SR-VP_05_06_2024_coassembly_Saturn_mini-Borg-like_32_7'
 id_to_ggkbase_name_map['ruby_borg_related'] = 'SR-VP_05_06_2024_coassembly_Ruby-Borg-related_37_10'
-
-# id_to_ggkbase_name_map['phage_69kb'] = 'SR-VP_05_06_2024_coassembly_unknown_69_26'
-# id_to_ggkbase_name_map['blue_borg'] = 'SR-VP_05_06_2024_coassembly_SR_VP_9_9_2021_65_4B_1_25m_Amethyst_Borg_complete_34_9'
-# id_to_ggkbase_name_map['huge_phage_40kn'] = 'SR-VP_05_06_2024_coassembly_unknown_40_43'
-# id_to_ggkbase_name_map['novel_mge'] = 'SR-VP_05_06_2024_coassembly_unknown_40_7'
-# id_to_ggkbase_name_map['vulcan_1'] = 'SR-VP_05_06_2024_coassembly_unknown_42_6'
-# id_to_ggkbase_name_map['vulcan_2'] = 'SR-VP_05_06_2024_coassembly_unknown_42_1'
-# id_to_ggkbase_name_map['linear_ece_55kb'] = 'SR-VP_05_06_2024_coassembly_unknown_55_20'
-# id_to_ggkbase_name_map['plasmid_like_41kb'] = 'SR-VP_05_06_2024_coassembly_Euryarchaeota_41_11'
-# id_to_ggkbase_name_map['plasmid_like_39kb'] = 'SR-VP_05_06_2024_coassembly_Archaea_39_10'
-# id_to_ggkbase_name_map['huge_phage_1mb'] = 'SR-VP_05_06_2024_coassembly_unknown_40_16'
-
-# id_to_ggkbase_name_map['black_borg'] = 'SR-VP_05_06_2024_coassembly_BLACK_SR_VP_26_10_2019_C_40cm_scaffold_23_FINAL_IR_32_277'
 id_to_ggkbase_name_map['black_borg'] = 'SR-VP_05_06_2024_coassembly_Black_Borg_32_272'
 id_to_ggkbase_name_map['linear_ece_19kb'] = 'Final_SR-VP_05_06_2024_coassembly_19kb_linear_ECE_26_1334_complete'
 
+is_mp = lambda df : df.target_name.str.startswith('mp_')
+is_ece = lambda df : ~df.target_name.str.startswith('mp_')
 
 ece_ggkbase_name = 'Final_SR-VP_05_06_2024_coassembly_19kb_linear_ECE_26_1334_complete'
 bb_ggkbase_name = 'SR-VP_05_06_2024_coassembly_Black_Borg_32_272'
@@ -92,34 +87,24 @@ for ggkbase_name in id_to_ggkbase_name_map.values():
 genome_sizes = {id_:fasta_get_genome_size(f'../data/ggkbase/contigs/{ggkbase_name}.contigs.fa') for id_, ggkbase_name in id_to_ggkbase_name_map.items()}
 
 
-def bbduk_load(data_dir='../data/bbduk'):
-    bbduk_df = list()
-    for path in glob.glob(os.path.join(data_dir, '*')):
-        with open(path, 'r') as f:
-            content = f.read()
-        sample_id = os.path.basename(path).replace('.txt', '')
-        total = re.search(r'#Total\s+(\d+)', content, flags=re.MULTILINE).group(1)
-        bbduk_df.append({'sample_id':sample_id, 'library_size':int(total)})
-    return pd.DataFrame(bbduk_df).set_index('sample_id')
-
-
-def metat_add_library_size(metat_df, bbduk_data_dir='../data/bbduk'):
-    bbduk_df = bbduk_load(bbduk_data_dir)
-    bbduk_df = bbduk_df[bbduk_df.index.str.contains('metat')].copy()
-    bbduk_df.index = bbduk_df.index.str.replace('_metat', '') # Remove the metat suffix from the sample name. 
-    metat_df['library_size'] = metat_df.sample_id.map(bbduk_df.library_size)
-    # RPKM is reads per kilobase of transcript per Million mapped reads
-    # metat_df['rpkm'] = (metat_df['count'] / (metat_df['contig_size'] / 1e3)) / (metat_df.library_size / 1e6)
-    return metat_df
-
-
-def load_interproscan(data_dir:str='../data/interproscan/'):
+def load_interproscan(data_dir:str='../data/interproscan/', max_e_value:float=1e-1):
     interproscan_df = list()
     for path in glob.glob(os.path.join(data_dir, '*')):
         df = InterProScanFileTSV.from_file(path).to_df()
         df['target_name'] = os.path.basename(path).replace('.tsv', '')
         interproscan_df.append(df)
     interproscan_df = pd.concat(interproscan_df)
+    interproscan_df = interproscan_df[interproscan_df.e_value < max_e_value].copy()
+
+    analysis_order = ['AntiFam', 'Gene3D','Pfam','SUPERFAMILY', 'TIGRFAM', 'FunFam', 'NCBIfam', 'SMART', 'SFLD', 'ProSitePatterns', 'ProSiteProfiles', 'PANTHER', 'Hamap', 'PRINTS', 'PIRSF', 'CDD']
+    interproscan_df =  interproscan_df[interproscan_df.signature_analysis.isin(analysis_order)].copy()
+    interproscan_df['signature_analysis'] = pd.Categorical(interproscan_df.signature_analysis, ordered=True, categories=analysis_order)
+    interproscan_df = interproscan_df.sort_values('signature_analysis')
+
+    fix_cdd_description = lambda description : description.replace('_', ' ') + ' domain-containing protein'
+    interproscan_df['signature_description'] = np.where(interproscan_df.signature_analysis == 'CDD', interproscan_df.signature_description.apply(fix_cdd_description), interproscan_df.signature_description)
+    interproscan_df['signature_description'] = interproscan_df.signature_description.str.replace('.', '', regex=False)
+    interproscan_df['signature_description'] = np.where(interproscan_df.interpro_description != '-', interproscan_df.interpro_description, interproscan_df.signature_description)
     return interproscan_df
 
 

@@ -4,35 +4,26 @@ import pandas as pd
 import numpy as np 
 import re
 from tqdm import tqdm
+from src.files.kofamscan import KofamscanFile
+import glob
 
 
-def kegg_load(path:str):
-    '''Load in a KEGG annotation file.'''
-    asterisk = list()
-    cols = ['id', 'ko', 'threshold', 'score', 'e_value', 'definition']
-    pattern = r'\s+([^\s]+)\s+(K\d{5})\s{1,}([^\s]+)\s{1,}([^\s]+)\s+([^\s]+)\s+(.+)'
+def kofamscan_load(data_dir:str='../data/kofamscan'):
+    kofamscan_df = list()
+    for path in glob.glob(os.path.join(data_dir, '*')):
+        target_name = os.path.basename(path).replace('.tsv', '')
+        df = KofamscanFile.from_file(path).to_df()
+        df['target_name'] = target_name
+        kofamscan_df.append(df)
+    kofamscan_df = pd.concat(kofamscan_df).reset_index(drop=True)
+    return kofamscan_df
 
-    df = list()
-    with open(path, 'r') as f:
-        for line in f.readlines():
-            if line.startswith('#'):
-                continue 
-            asterisk += [line.startswith('*')]
-            line = line[1:]
-            match_ = re.search(pattern, line)
-            df += [dict([(cols[i], match_.group(i + 1)) for i in range(len(cols))])]
-    df = pd.DataFrame(df)
-    df['*'] = asterisk 
-    df['definition'] = df.definition.str.strip()
-    df['e_value'] = pd.to_numeric(df.e_value)
-    return df 
-
-def kegg_get_pathways_by_ko(kos, path:str='../data/kegg/pathways.tsv'):
+def kofamscan_get_pathways_by_ko(kos, path:str='../data/kofamscan/pathways.tsv'):
     kos = [kos[i:i + 10] for i in range(0, len(kos), 10)] # Split into chunks to speed things up. 
     if not os.path.exists(path):
         content = ''
         for ko in tqdm(kos, desc='get_ko_pathways'):
-            url = f'https://rest.kegg.jp/link/pathway/ko:{'+'.join(ko)}'
+            url = f'https://rest.kofamscan.jp/link/pathway/ko:{'+'.join(ko)}'
             content += requests.get(url).text
         with open(path, 'w') as f:
             f.write(content)
@@ -43,7 +34,7 @@ def kegg_get_pathways_by_ko(kos, path:str='../data/kegg/pathways.tsv'):
     return ko_to_pathway_map
 
 
-def kegg_get_modules_by_ko(kos, path:str='../data/kegg/modules.tsv'):
+def kofamscan_get_modules_by_ko(kos, path:str='../data/kofamscan/modules.tsv'):
     kos = [kos[i:i + 10] for i in range(0, len(kos), 10)] # Split into chunks to speed things up. 
     if not os.path.exists(path):
         content = ''
@@ -61,7 +52,7 @@ def kegg_get_modules_by_ko(kos, path:str='../data/kegg/modules.tsv'):
 
 
 
-def kegg_get_module(module, module_dir:str='../data/kegg/modules'):
+def kofamscan_get_module(module, module_dir:str='../data/kofamscan/modules'):
     '''Download the summary file for a Kegg module and return the name.'''
     path = os.path.join(module_dir, f'{module}.txt')
     if not os.path.exists(path):

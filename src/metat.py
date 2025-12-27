@@ -4,7 +4,12 @@ import pandas as pd
 import glob 
 import numpy as np 
 from src.bbduk import bbduk_load
-from scipy.stats import gmean 
+from scipy.stats import gmean
+import re
+ 
+def get_genes(df, genes):
+    index = list(zip(df.target_name.values, df.gene_id.values))
+    return np.array([(gene in genes) for gene in index])
 
 
 def metat_add_library_size(metat_df, bbduk_data_dir='../data/bbduk'):
@@ -20,7 +25,6 @@ def metat_add_library_size(metat_df, bbduk_data_dir='../data/bbduk'):
 #   For differential expression within an organism, I think this should be done on a per-organism basis
 #   (and also per-sample)
 # (3) 
-# TODO: Should I be doing this on a per-sample or overall basis? Seems like I should do it across samples if the goal is to compare that way...
 
 def _metat_add_pseudocounts_multiplicative(metat_df:pd.DataFrame):
     n = metat_df.read_count.sum()
@@ -42,50 +46,56 @@ def metat_add_pseudocounts(metat_df:pd.DataFrame, method:str='ones'):
     methods['mzr'] = _metat_add_pseudocounts_multiplicative
     methods['median'] = _metat_add_pseudocounts_impute_median
 
-    # assert 'read_count_original' not in metat_df.columns, 'metat_add_pseudocounts: Seems like the pseusocounts have already been added!'
+    # assert 'read_count_original' not in metat_df.columns, 'metat_add_pseudocounts: Seems like the pseudocounts have already been added!'
     if 'read_count_original' in metat_df.columns:
         # print('metat_add_pseudocounts: Skipping pseudocounts, seems like they are already added.')
         return metat_df
     
     metat_df['read_count_original'] = metat_df.read_count.values.copy()
     metat_df_ = list()
-    for _, df in metat_df.groupby('sample_id', group_keys=False):
-        df = methods[method](df)
+    for (sample_id, target_name), df in metat_df.groupby(['sample_id', 'target_name'], group_keys=False):
+        df = methods[method](df) # MZR should preserve the ratios for a specific organism in a specific sample.
         metat_df_.append(df)
     return pd.concat(metat_df_)
 
 metat_check_single_genome = lambda metat_df : metat_df.target_name.nunique() == 1
 metat_check_single_sample = lambda metat_df : metat_df.sample_id.nunique() == 1
 
-# Use the geometric mean (which does not work with zero values, so will need to adjust).
-# Should I be using RPKM or read counts?
-def _metat_normalize_alr(metat_df, ref_gene_ids:list=[]):
-    target_name, sample_id = metat_df.target_name.values[0], metat_df.sample_id.values[0]
-    mask = metat_df.gene_id.isin(ref_gene_ids) # & (metat_df.read_count_original > 0)
-    # print('_metat_normalize_alr:', mask.sum(), f'nonzero reference genes for {target_name} in {sample_id}.')
-    normalization_factor = gmean(metat_df[mask].read_count.values)
-    # normalization_factor = gmean(metat_df[metat_df.gene_id.isin(ref_gene_ids)].read_count.values)
-    metat_df['normalization_factor_alr'] = normalization_factor
-    metat_df['read_count_0_normalized_alr'] = np.log(metat_df.read_count.min()) - np.log(normalization_factor)
-    metat_df['read_count_normalized_alr'] = np.log(metat_df.read_count) - np.log(normalization_factor)
+# Reference provided as {target_name:[(target_name, gene_id), (target_name, gene_id)]}
+
+def _metat_normalize_alr(metat_df:pd.DataFrame, ref_genes:dict=None, sample_id:str=None):
+    assert metat_check_single_sample(metat_df), '_metat_get_normalization_factors_alr'
+    normalization_factors = dict()
+    for target_name, genes in ref_genes.items():
+        
+        read_counts = metat_df[get_genes(metat_df, genes)]
+        read_counts = read_counts[read_counts.read_count_original > 0].read_count
+
+        if len(read_counts) == 0:
+            print(f'_metat_normalize_alr: No reference reads for {target_name} in {sample_id}.')
+        normalization_factors[target_name] = gmean(read_counts)
+    metat_df = metat_df.reset_index() # Restore the original index. 
+    metat_df['normalization_factor_alr'] = metat_df.target_name.map(normalization_factors)
+    metat_df['read_count_normalized_alr'] = np.log(metat_df.read_count) - np.log(metat_df.normalization_factor_alr)
     return metat_df
 
-def _metat_normalize_clr(metat_df, ref_gene_ids:list=[]):
-    normalization_factor = gmean(metat_df.read_count.values)
-    metat_df['normalization_factor_clr'] = normalization_factor
-    metat_df['read_count_0_normalized_clr'] = np.log(metat_df.read_count.min()) - np.log(normalization_factor)
-    metat_df['read_count_normalized_clr'] = np.log(metat_df.read_count) - np.log(normalization_factor)
+def _metat_normalize_clr(metat_df, ref_genes:list=[], sample_id:str=None):
+    assert metat_check_single_sample(metat_df), '_metat_normalize_clr'
+    normalization_factor = metat_df.groupby('target_name').apply(lambda df : gmean(df.read_count.values), include_groups=False).to_dict()
+    metat_df['normalization_factor_clr'] = metat_df.target_name.map(normalization_factor)
+    metat_df['read_count_normalized_clr'] = np.log(metat_df.read_count) - np.log(metat_df.normalization_factor_clr)
     return metat_df
 
-def metat_normalize(metat_df:pd.DataFrame, ref_gene_ids:dict=dict(), add_pseudocount:str='mzr', method:str='alr'):
+def metat_normalize(metat_df:pd.DataFrame, ref_genes:dict=dict(), add_pseudocount:str='mzr', method:str='alr'):
     methods = dict()
     methods['clr'] = _metat_normalize_clr
     methods['alr'] = _metat_normalize_alr
 
+    metat_df = metat_add_pseudocounts(metat_df.copy(), method=add_pseudocount)
+
     metat_df_normalized = list()
-    for (sample_id, target_name), df in metat_df.groupby(['sample_id', 'target_name'], group_keys=True):
-        df = metat_add_pseudocounts(df.copy(), method=add_pseudocount)
-        df = methods[method](df, ref_gene_ids=ref_gene_ids.get(target_name, None))
+    for sample_id, df in metat_df.groupby('sample_id', group_keys=True):
+        df = methods[method](df, ref_genes=ref_genes, sample_id=sample_id)
         metat_df_normalized.append(df)
 
     return pd.concat(metat_df_normalized)
@@ -123,6 +133,11 @@ def metat_load(metat_dir:str='../data/metat', read_length:int=150, add_pseudocou
     if add_pseudocounts is not None:
         metat_df = metat_add_pseudocounts(metat_df, method=add_pseudocounts)
     metat_df = metat_add_library_size(metat_df) 
+
+    metat_df['location'] = [re.search('top|bottom|middle', sample_id).group(0) for sample_id in metat_df.sample_id]
+    metat_df['reactor'] = [re.search('(ck|n)_', sample_id).group(1) for sample_id in metat_df.sample_id]
+    metat_df['year'] = [re.search('2024|2025', sample_id).group(0) for sample_id in metat_df.sample_id]
+
     return metat_df
 
 

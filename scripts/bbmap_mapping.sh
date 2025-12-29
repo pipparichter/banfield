@@ -1,30 +1,11 @@
-mkdir -p ../data/metat/mp_4
-mkdir -p ../data/metat/mp_1
-mkdir -p ../data/metat/mp_3
-mkdir -p ../data/metat/mp_5
-mkdir -p ../data/metat/mp_2
-mkdir -p ../data/metat/jupiter_mini_borg_1
-mkdir -p ../data/metat/jupiter_mini_borg_2
-mkdir -p ../data/metat/jupiter_mini_borg_3
-mkdir -p ../data/metat/jupiter_mini_borg_4
-mkdir -p ../data/metat/jupiter_mini_borg_6
-mkdir -p ../data/metat/jupiter_mini_borg_7
-mkdir -p ../data/metat/jupiter_mini_borg_8
-mkdir -p ../data/metat/jupiter_mini_borg_9
-mkdir -p ../data/metat/saturn_mini_borg_1
-mkdir -p ../data/metat/saturn_mini_borg_2
-mkdir -p ../data/metat/saturn_mini_borg_3
-mkdir -p ../data/metat/saturn_mini_borg_4
-mkdir -p ../data/metat/unclassified_mini_borg
-mkdir -p ../data/metat/unclassified_borg
-mkdir -p ../data/metat/amethyst_borg
-mkdir -p ../data/metat/oxblood_borg
-mkdir -p ../data/metat/pink_borg
-mkdir -p ../data/metat/purple_borg
-mkdir -p ../data/metat/rose_borg
-mkdir -p ../data/metat/vermilion_borg
-mkdir -p ../data/metat/mercury_mini_borg
-mkdir -p ../data/metat/saturn_mini_borg_like
-mkdir -p ../data/metat/ruby_borg_related
-mkdir -p ../data/metat/black_borg
-mkdir -p ../data/metat/linear_ece_19kb
+mkdir -p ../data/metat/mp
+sbatch --wrap "bbmap.sh pigz=t unpigz=t ambiguous=random minid=0.96 idfilter=0.97 threads=64 out=stdout.sam editfilter=5 out=stdout.sam in1=/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_bot_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_ck_bot_05_17_2025_metaT_trim_clean.PE.1.fastq.gz in2=/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_bot_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_ck_bot_05_17_2025_metaT_trim_clean.PE.2.fastq.gz ref=../data/mp.fn nodisk | shrinksam | sambam > ../data/metat/mp/ck_bottom_2025_metat.bam"
+sbatch --wrap "bbmap.sh pigz=t unpigz=t ambiguous=random minid=0.96 idfilter=0.97 threads=64 out=stdout.sam editfilter=5 out=stdout.sam in1=/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_mid_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_ck_mid_05_17_2025_metaT_trim_clean.PE.1.fastq.gz in2=/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_mid_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_ck_mid_05_17_2025_metaT_trim_clean.PE.2.fastq.gz ref=../data/mp.fn nodisk | shrinksam | sambam > ../data/metat/mp/ck_middle_2025_metat.bam"
+sbatch --wrap "bbmap.sh pigz=t unpigz=t ambiguous=random minid=0.96 idfilter=0.97 threads=64 out=stdout.sam editfilter=5 out=stdout.sam in1=/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_top_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_ck_top_05_17_2025_metaT_trim_clean.PE.1.fastq.gz in2=/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_top_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_ck_top_05_17_2025_metaT_trim_clean.PE.2.fastq.gz ref=../data/mp.fn nodisk | shrinksam | sambam > ../data/metat/mp/ck_top_2025_metat.bam"
+sbatch --wrap "bbmap.sh pigz=t unpigz=t ambiguous=random minid=0.96 idfilter=0.97 threads=64 out=stdout.sam editfilter=5 out=stdout.sam in1=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_top_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_N_top_05_17_2025_metaT_trim_clean.PE.1.fastq.gz in2=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_top_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_N_top_05_17_2025_metaT_trim_clean.PE.2.fastq.gz ref=../data/mp.fn nodisk | shrinksam | sambam > ../data/metat/mp/n_top_2025_metat.bam"
+sbatch --wrap "bbmap.sh pigz=t unpigz=t ambiguous=random minid=0.96 idfilter=0.97 threads=64 out=stdout.sam editfilter=5 out=stdout.sam in1=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_bot_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_N_bot_05_17_2025_metaT_trim_clean.PE.1.fastq.gz in2=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_bot_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_N_bot_05_17_2025_metaT_trim_clean.PE.2.fastq.gz ref=../data/mp.fn nodisk | shrinksam | sambam > ../data/metat/mp/n_bottom_2025_metat.bam"
+sbatch --wrap "bbmap.sh pigz=t unpigz=t ambiguous=random minid=0.96 idfilter=0.97 threads=64 out=stdout.sam editfilter=5 out=stdout.sam in1=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_mid_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_N_mid_05_17_2025_metaT_trim_clean.PE.1.fastq.gz in2=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_mid_05_17_2025_metaT/raw.d/SR-VP_Bioreactor_N_mid_05_17_2025_metaT_trim_clean.PE.2.fastq.gz ref=../data/mp.fn nodisk | shrinksam | sambam > ../data/metat/mp/n_middle_2025_metat.bam"
+sbatch --wrap "bbmap.sh pigz=t unpigz=t ambiguous=random minid=0.96 idfilter=0.97 threads=64 out=stdout.sam editfilter=5 out=stdout.sam in1=/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_bot_05_06_2024_metaT/raw.d/SR-VP_Bioreactor_ck_bot_05_06_2024_metaT_trim_clean.PE.1.fastq.gz in2=/groups/banfield/sequences/2025/SR-VP_Bioreactor_ck_bot_05_06_2024_metaT/raw.d/SR-VP_Bioreactor_ck_bot_05_06_2024_metaT_trim_clean.PE.2.fastq.gz ref=../data/mp.fn nodisk | shrinksam | sambam > ../data/metat/mp/ck_bottom_2024_metat.bam"
+sbatch --wrap "bbmap.sh pigz=t unpigz=t ambiguous=random minid=0.96 idfilter=0.97 threads=64 out=stdout.sam editfilter=5 out=stdout.sam in1=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_top_05_06_2024_metaT/raw.d/SR-VP_Bioreactor_N_top_05_06_2024_metaT_trim_clean.PE.1.fastq.gz in2=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_top_05_06_2024_metaT/raw.d/SR-VP_Bioreactor_N_top_05_06_2024_metaT_trim_clean.PE.2.fastq.gz ref=../data/mp.fn nodisk | shrinksam | sambam > ../data/metat/mp/n_top_2024_metat.bam"
+sbatch --wrap "bbmap.sh pigz=t unpigz=t ambiguous=random minid=0.96 idfilter=0.97 threads=64 out=stdout.sam editfilter=5 out=stdout.sam in1=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_bot_05_06_2024_metaT/raw.d/SR-VP_Bioreactor_N_bot_05_06_2024_metaT_trim_clean.PE.1.fastq.gz in2=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_bot_05_06_2024_metaT/raw.d/SR-VP_Bioreactor_N_bot_05_06_2024_metaT_trim_clean.PE.2.fastq.gz ref=../data/mp.fn nodisk | shrinksam | sambam > ../data/metat/mp/n_bottom_2024_metat.bam"
+sbatch --wrap "bbmap.sh pigz=t unpigz=t ambiguous=random minid=0.96 idfilter=0.97 threads=64 out=stdout.sam editfilter=5 out=stdout.sam in1=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_mid_05_06_2024_metaT/raw.d/SR-VP_Bioreactor_N_mid_05_06_2024_metaT_trim_clean.PE.1.fastq.gz in2=/groups/banfield/sequences/2025/SR-VP_Bioreactor_N_mid_05_06_2024_metaT/raw.d/SR-VP_Bioreactor_N_mid_05_06_2024_metaT_trim_clean.PE.2.fastq.gz ref=../data/mp.fn nodisk | shrinksam | sambam > ../data/metat/mp/n_middle_2024_metat.bam"

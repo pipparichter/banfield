@@ -79,7 +79,7 @@ class GenBankFile():
 
         df = list()
 
-        contig_number = 1
+        contig_index = 1
         for contig_id, features in genbank_read_features(path).items():
             contig_df = list()
             for feature_type, coordinate, feature in genbank_parse_features(features):
@@ -89,12 +89,13 @@ class GenBankFile():
                 row.update(genbank_parse_feature(feature))
                 contig_df.append(row)
             contig_df = pd.DataFrame(contig_df)
+            contig_df['contig_index'] = contig_index
             contig_df['contig_id'] = contig_id
-            contig_df['gene_id'] = [f'{contig_number}_{i + 1}' for i in range(len(contig_df))]
+            contig_df['gene_id'] = [f'{contig_index}_{i + 1}' for i in range(len(contig_df))]
             contig_df = contig_df.rename(columns={'translation':'seq'})
             # contig_df['locus_tag'] = [f'{contig_id}_{i + 1}' for i in range(len(contig_df))]
             df.append(contig_df)
-            contig_number += 1 
+            contig_index += 1 
 
         df = pd.concat(df)
         
@@ -105,13 +106,14 @@ class GenBankFile():
 
         return obj 
     
-    def to_fasta(self, path:str):
+    def to_fasta(self, path:str, mode:str='w'):
         fasta_file = FASTAFile.from_df(self.df.set_index('gene_id'))
-        fasta_file.write(path)
+        fasta_file.write(path, mode=mode)
     
-    def to_gff(self, path:str, model='Prodigal', contig_id:str=None):
-        with open(path, 'w') as f:
-            f.write('##gff-version  3\n')
+    def to_gff(self, path:str, model='Prodigal', contig_id:str=None, mode='w'):
+        if mode == 'w':
+            with open(path, 'w') as f:
+                f.write('##gff-version  3\n')
         
         cols = ['contig_id', 'model', 'feature_type', 'start', 'stop', 'score', 'strand', 'frame', 'description']
         gff_df = self.to_df()

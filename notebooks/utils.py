@@ -59,7 +59,7 @@ is_ece = lambda df : ~df.target_name.str.startswith('mp_')
 ece_ggkbase_name = 'Final_SR-VP_05_06_2024_coassembly_19kb_linear_ECE_26_1334_complete'
 bb_ggkbase_name = 'SR-VP_05_06_2024_coassembly_Black_Borg_32_272'
 
-ece_id = 'ece_19kb'
+ece_id = 'linear_ece_19kb'
 mp_id = 'mp_5'
 
 get_genus = lambda taxonomy : re.search('g__([^;]+)', taxonomy).group(1) if (re.search('g__([^;]+)', taxonomy) is not None) else 'none'

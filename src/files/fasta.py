@@ -98,7 +98,7 @@ class FASTAFile():
         num_c = residues.count('C')
         return (num_g + num_c) / n
             
-    def to_df(self, parse_description:bool=True) -> pd.DataFrame:
+    def to_df(self, parse_description:bool=False) -> pd.DataFrame:
 
         df = []
         for id_, seq, description in zip(self.ids, self.seqs, self.descriptions):
@@ -115,18 +115,19 @@ class FASTAFile():
 
         return df
 
-    def write(self, path:str, mode:str='w') -> NoReturn:
+    def write(self, path:str, mode:str='w', add_description:bool=False) -> NoReturn:
         f = open(path, mode=mode)
         records = []
         for id_, seq, description in zip(self.ids, self.seqs, self.descriptions):
-            record = SeqRecord(Seq(seq), id=str(id_), description=description)
+            record = SeqRecord(Seq(seq), id=str(id_), description='' if (not add_description) else description)
             records.append(record)
         SeqIO.write(records, f, 'fasta')
         f.close()
 
-def fasta_get_contig_sizes(path:str) -> dict:
+def fasta_get_contig_sizes(path:str, use_contig_index:bool=True) -> dict:
     fasta_file = FASTAFile.from_file(path)
-    contig_sizes = dict(list(zip(fasta_file.ids, fasta_file.seqs)))
+    contig_ids = (np.arange(len(fasta_file.ids)) + 1).astype(str) if use_contig_index else fasta_file.ids
+    contig_sizes = dict(list(zip(contig_ids, fasta_file.seqs)))
     return {contig_id:len(seq) for contig_id, seq in contig_sizes.items()}
 
 def fasta_get_genome_size(path:str) -> int:

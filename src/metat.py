@@ -115,17 +115,23 @@ def metat_filter(metat_df, threshold:float=(5 / (1e8 / 1e6)), min_samples:int=8,
     return metat_df
 
 
-def metat_load(metat_dir:str='../data/metat', read_length:int=150, add_pseudocounts:str=None):
+def metat_load(data_dir:str='../data/metat', read_length:int=150, add_pseudocounts:str=None, target_names=None, exclude_target_names=['mp_1', 'mp_2', 'mp_3', 'mp_4', 'mp_5']):
     metat_df = list()
 
-    for target_name in os.listdir(metat_dir): # Each of the subdirectories is the organism name. 
-        assert os.path.isdir(os.path.join(metat_dir, target_name)), f'load_metat: Directory {os.path.join(metat_dir, target_name)} does not exist.'
-        for path in glob.glob(os.path.join(metat_dir, target_name, '*read_counts')):
+    target_names = os.listdir(data_dir) if (target_names is None) else target_names
+    target_names = [target_name for target_name in target_names if (target_name not in exclude_target_names)]
+    
+    for target_name in target_names: # Each of the subdirectories is the organism name. 
+
+        assert os.path.isdir(os.path.join(data_dir, target_name)), f'load_metat: Directory {os.path.join(data_dir, target_name)} does not exist.'
+        for path in glob.glob(os.path.join(data_dir, target_name, '*read_counts')):
             if 'summary' in path:
                 continue 
-            df = pd.read_csv(path, sep='\t', comment='#', skiprows=2, header=None, names=['gene_id', 'contig', 'start', 'end', 'strand', 'length', 'read_count'])
+            df = pd.read_csv(path, sep='\t', comment='#', skiprows=2, header=None, names=['gene_id', 'contig_id', 'start', 'end', 'strand', 'length', 'read_count'])
             df['sample_id'] = os.path.basename(path).replace('_read_counts', '')
             df['target_name'] = target_name  
+            if target_name == 'mp':
+                df['target_name'] = [gene_id.split('.')[0] for gene_id in df.gene_id]
             metat_df.append(df)
     
     metat_df = pd.concat(metat_df).reset_index(drop=True)
@@ -142,32 +148,40 @@ def metat_load(metat_dir:str='../data/metat', read_length:int=150, add_pseudocou
 
 
 
-def _metat_load_summary(path:str):
-    # The summary file only includes the mapped reads in the BAM file, so the total reads mapped to the provided reference genome. 
-    # Therefore, these cannot be used to compute RPKM. 
-    cols = dict()
-    cols['Assigned'] = 'n_assigned'
-    cols['Unassigned_Unmapped'] = 'n_unassigned_unmapped' # Could not be mapped to the reference. 
-    cols['Unassigned_NoFeatures'] = 'n_unassigned_no_features' # Mapped, but could not be assigned to a feature. 
-    cols['Unassigned_Ambiguity'] = 'n_unassigned_ambiguity'
-    df = pd.read_csv(path, sep=r'\s+', index_col=0).T.reset_index(drop=True)
-    df.columns.name = ''
-    df = df[list(cols.keys())].copy()
-    df = df.rename(columns=cols)
-    return df 
+# def _metat_load_summary(path:str):
+#     # The summary file only includes the mapped reads in the BAM file, so the total reads mapped to the provided reference genome. 
+#     # Therefore, these cannot be used to compute RPKM. 
+#     cols = dict()
+#     cols['Assigned'] = 'n_assigned'
+#     cols['Unassigned_Unmapped'] = 'n_unassigned_unmapped' # Could not be mapped to the reference. 
+#     cols['Unassigned_NoFeatures'] = 'n_unassigned_no_features' # Mapped, but could not be assigned to a feature. 
+#     cols['Unassigned_Ambiguity'] = 'n_unassigned_ambiguity'
+#     df = pd.read_csv(path, sep=r'\s+', index_col=0).T.reset_index(drop=True)
+#     df.columns.name = ''
+#     df = df[list(cols.keys())].copy()
+#     df = df.rename(columns=cols)
+#     return df 
 
 
-def metat_load_summary(data_dir='../data/metat/'):
-    metat_summary_df = list()
-    for target_name in os.listdir(data_dir): # Each of the subdirectories is the organism name. 
-        assert os.path.isdir(os.path.join(data_dir, target_name)), f'load_metat: Directory {os.path.join(data_dir, target_name)} does not exist.'
-        for path in glob.glob(os.path.join(data_dir, target_name, '*summary')):
-            df = _metat_load_summary(path)
-            df['sample_id'] = os.path.basename(path).replace('_read_counts.summary', '')
-            df['target_name'] = target_name  
-            metat_summary_df.append(df)
-    metat_summary_df = pd.concat(metat_summary_df)
-    metat_summary_df['total'] = metat_summary_df.n_unassigned_ambiguity + metat_summary_df.n_assigned + metat_summary_df.n_unassigned_no_features
-    metat_summary_df = metat_add_library_size(metat_summary_df)
-    return metat_summary_df.reset_index(drop=True)
+# def metat_load_summary(data_dir='../data/metat/', target_names:list=None, exclude_target_names=['mp_1', 'mp_2', 'mp_3', 'mp_4', 'mp_5']):
+#     metat_summary_df = list()
+
+#     target_names = os.listdir(data_dir) if (target_names is None) else target_names
+
+#     for target_name in target_names: # Each of the subdirectories is the organism name. 
+#         if target_name in exclude_target_names:
+#             continue 
+
+#         assert os.path.isdir(os.path.join(data_dir, target_name)), f'load_metat: Directory {os.path.join(data_dir, target_name)} does not exist.'
+#         for path in glob.glob(os.path.join(data_dir, target_name, '*summary')):
+#             df = _metat_load_summary(path)
+#             df['sample_id'] = os.path.basename(path).replace('_read_counts.summary', '')
+#             df['target_name'] = target_name  
+#             df['target_name'] = [contig_id.split('.')[0] for contig_id in df.contig_id]
+#             df['contig_id'] = [contig_id.split('.')[-1] for contig_id in df.contig_id]
+
+#             metat_summary_df.append(df)
+#     metat_summary_df = pd.concat(metat_summary_df)
+#     metat_summary_df = metat_add_library_size(metat_summary_df)
+#     return metat_summary_df.reset_index(drop=True)
 

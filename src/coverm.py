@@ -53,7 +53,7 @@ def coverm_reformat_columns(df:pd.DataFrame):
 
     def rename_columns(df):
         col_map = {col:'_'.join(col.split(' ')[1:]).lower() for col in df.columns}
-        col_map.update({'sample_id':'sample_id', 'Contig':'contig'})
+        col_map.update({'sample_id':'sample_id', 'Contig':'contig_id'})
         return df.rename(columns=col_map)
 
     df = [rename_columns(df_) for df_ in df]
@@ -65,20 +65,28 @@ def coverm_reformat_columns(df:pd.DataFrame):
 # rpkm: Reads per kb per million mapped reads.
 # tpm: TPM-normalized coverage, which is the RPKM for a specific contig divided by the sum of all RPKM. This controls for both contig length and sequencing depth. 
 
-def coverm_load(data_dir='../data/coverm/', bbduk_data_dir='../data/bbduk', contig_sizes:dict=None):
+def coverm_load(data_dir='../data/coverm/', bbduk_data_dir='../data/bbduk', contig_size_df:pd.DataFrame=None, exclude_target_names=['mp_1', 'mp_2', 'mp_3', 'mp_4', 'mp_5']):
     coverm_df = list()
     for path in glob.glob(os.path.join(data_dir, '*')):
         file_name = os.path.basename(path).replace('.tsv', '')
         target_name = file_name.replace('.tsv', '')
+        if target_name in exclude_target_names:
+            continue
+
         df = coverm_reformat_columns(pd.read_csv(path, sep='\t'))
         df['target_name'] = target_name
+
+        if target_name == 'mp':
+            df['target_name'] = [contig_id.split('.')[0] for contig_id in df.contig_id]
+            df['contig_id'] = [contig_id.split('.')[-1] for contig_id in df.contig_id]
+
         if len(df) > 0:
             coverm_df.append(df)
     coverm_df = pd.concat(coverm_df)
     coverm_df['sample_id'] = coverm_df.sample_id.map(ggkbase_name_to_sample_id_map)
 
-    if contig_sizes is not None:
-        coverm_df['contig_size'] = coverm_df.contig.map(contig_sizes)
+    if contig_size_df is not None:
+        coverm_df = coverm_df.merge(contig_size_df, on=['contig_id', 'target_name'], how='left')
         coverm_df = coverm_add_library_size(coverm_df, bbduk_data_dir=bbduk_data_dir)
         coverm_df = coverm_group_targets(coverm_df)
         coverm_df['rpkm'] = (coverm_df['read_count'] / (coverm_df['genome_size'] / 1e3)) / (coverm_df.library_size / 1e6) # RPKM is reads per kilobase of transcript per million mapped reads.

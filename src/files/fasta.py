@@ -124,9 +124,9 @@ class FASTAFile():
         SeqIO.write(records, f, 'fasta')
         f.close()
 
-def fasta_get_contig_sizes(path:str, use_contig_index:bool=True) -> dict:
+def fasta_get_contig_sizes(path:str) -> dict:
     fasta_file = FASTAFile.from_file(path)
-    contig_ids = (np.arange(len(fasta_file.ids)) + 1).astype(str) if use_contig_index else fasta_file.ids
+    contig_ids = fasta_file.ids
     contig_sizes = dict(list(zip(contig_ids, fasta_file.seqs)))
     return {contig_id:len(seq) for contig_id, seq in contig_sizes.items()}
 

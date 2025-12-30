@@ -20,10 +20,13 @@ import json
 import itertools
 import subprocess
 
+genome_ids = pd.read_csv('genome_metadata.csv').genome_id.values
+contig_sizes = dict()
+for genome_id in genome_ids:
+    contig_sizes.update(fasta_get_contig_sizes(f'../data/data/{genome_id}.fn'))
 
-
-is_mp = lambda df : df.target_name.str.startswith('mp_')
-is_ece = lambda df : ~df.target_name.str.startswith('mp_')
+is_mp = lambda df : df.genome_id.str.startswith('mp_')
+is_ece = lambda df : ~df.genome_id.str.startswith('mp_')
 
 ece_id = 'linear_ece_19kb'
 mp_id = 'mp_5'
@@ -50,7 +53,7 @@ def load_interproscan(data_dir:str='../data/interproscan/', max_e_value:float=1e
     interproscan_df = list()
     for path in glob.glob(os.path.join(data_dir, '*')):
         df = InterProScanFileTSV.from_file(path).to_df()
-        df['target_name'] = os.path.basename(path).replace('.tsv', '')
+        df['genome_id'] = os.path.basename(path).replace('.tsv', '')
         interproscan_df.append(df)
     interproscan_df = pd.concat(interproscan_df)
     interproscan_df = interproscan_df[interproscan_df.e_value < max_e_value].copy()

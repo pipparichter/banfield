@@ -20,7 +20,7 @@ import json
 import itertools
 import subprocess
 
-genome_ids = pd.read_csv('genome_metadata.csv').genome_id.values
+genome_ids = pd.read_csv('./data/genome_metadata.csv').genome_id.values
 contig_sizes = dict()
 for genome_id in genome_ids:
     contig_sizes.update(fasta_get_contig_sizes(f'../data/data/{genome_id}.fn'))

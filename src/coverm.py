@@ -76,5 +76,10 @@ def coverm_load(path:str, bbduk_data_dir='../data/bbduk', contig_sizes:dict=None
         coverm_df = coverm_add_library_size(coverm_df, bbduk_data_dir=bbduk_data_dir)
         coverm_df = coverm_group_genomes(coverm_df)
         coverm_df['rpkm'] = (coverm_df['read_count'] / (coverm_df['genome_size'] / 1e3)) / (coverm_df.library_size / 1e6) # RPKM is reads per kilobase of transcript per million mapped reads.
+    
+    sample_ids = coverm_df.sample_id.values
+    coverm_df['location'] = [re.search('top|bottom|middle', sample_id).group(0)  if (re.search('top|bottom|middle', sample_id) is not None) else 'none' for sample_id in sample_ids]
+    coverm_df['reactor'] = [re.search('(ck|n)_', sample_id).group(1)  if (re.search('(ck|n)_', sample_id) is not None) else 'none' for sample_id in sample_ids]
+    coverm_df['year'] = [re.search('2024|2025', sample_id).group(0) if (re.search('2024|2025', sample_id) is not None) else 'none' for sample_id in sample_ids]
 
     return coverm_df

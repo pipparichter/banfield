@@ -23,23 +23,25 @@ def coverm_add_library_size(coverm_df, bbduk_data_dir='../data/bbduk'):
 
 
 def coverm_group_genomes(coverm_df:pd.DataFrame):
-    sample_df = coverm_df[coverm_df.sample_id == coverm_df.sample_id.values[0]].copy() # Get the coverage for a single sample. 
     coverm_df = coverm_df.copy()
 
-    coverm_df['genome_size'] = coverm_df.genome_id.map(sample_df.groupby('genome_id').contig_size.sum())
+    coverm_df['genome_size'] = coverm_df.genome_id.map(coverm_df.drop_duplicates(['contig_id']).groupby('genome_id').contig_size.sum())
     coverm_df['contig_weight'] = coverm_df.contig_size / coverm_df.genome_size 
     # Weight each of the columns by contig size. 
     coverm_df['variance'] = coverm_df['variance'] * coverm_df.contig_weight 
     coverm_df['trimmed_mean'] = coverm_df['trimmed_mean'] * coverm_df.contig_weight 
-    coverm_df['mean'] = coverm_df['mean'] * coverm_df.contig_weight 
+    coverm_df['rpkm'] = coverm_df['rpkm'] * coverm_df.contig_weight 
+    coverm_df['tpm'] = coverm_df['tpm'] * coverm_df.contig_weight 
 
     agg_funcs = dict()
     agg_funcs['variance'] = 'mean'
     agg_funcs['mean'] = 'mean'
     agg_funcs['trimmed_mean'] = 'mean'
+    agg_funcs['covered_bases'] = 'sum'
     agg_funcs['read_count'] = 'sum'
     agg_funcs['genome_size'] = 'first'
-    agg_funcs['library_size'] = 'first'
+    agg_funcs['rpkm'] = 'mean'
+    agg_funcs['tpm'] = 'mean'
     
     coverm_df = coverm_df.groupby(['sample_id', 'genome_id']).agg(agg_funcs)
     return coverm_df.reset_index()
@@ -66,20 +68,24 @@ def _coverm_load(df:pd.DataFrame):
 # rpkm: Reads per kb per million mapped reads.
 # tpm: TPM-normalized coverage, which is the RPKM for a specific contig divided by the sum of all RPKM. This controls for both contig length and sequencing depth. 
 
-def coverm_load(path:str, bbduk_data_dir='../data/bbduk', contig_sizes:dict=None):
+def coverm_load(path:str, contig_sizes:dict=None):
     coverm_df = _coverm_load(pd.read_csv(path, sep='\t'))
     coverm_df['genome_id'] = [contig_id.split('.')[0] for contig_id in coverm_df.contig_id]
     coverm_df['sample_id'] = coverm_df.sample_id.map(ggkbase_id_to_sample_id_map)
+    coverm_df['contig_size'] = coverm_df.contig_id.map(contig_sizes)
+    coverm_df = coverm_group_genomes(coverm_df)
+    coverm_df['fraction_covered_bases'] = coverm_df.covered_bases / coverm_df.genome_size
 
-    if contig_sizes is not None:
-        coverm_df['contig_size'] = coverm_df.contig_id.map(contig_sizes)
-        coverm_df = coverm_add_library_size(coverm_df, bbduk_data_dir=bbduk_data_dir)
-        coverm_df = coverm_group_genomes(coverm_df)
-        coverm_df['rpkm'] = (coverm_df['read_count'] / (coverm_df['genome_size'] / 1e3)) / (coverm_df.library_size / 1e6) # RPKM is reads per kilobase of transcript per million mapped reads.
-    
     sample_ids = coverm_df.sample_id.values
     coverm_df['location'] = [re.search('top|bottom|middle', sample_id).group(0)  if (re.search('top|bottom|middle', sample_id) is not None) else 'none' for sample_id in sample_ids]
     coverm_df['reactor'] = [re.search('(ck|n)_', sample_id).group(1)  if (re.search('(ck|n)_', sample_id) is not None) else 'none' for sample_id in sample_ids]
     coverm_df['year'] = [re.search('2024|2025', sample_id).group(0) if (re.search('2024|2025', sample_id) is not None) else 'none' for sample_id in sample_ids]
 
     return coverm_df
+
+    # if contig_sizes is not None:
+    #     coverm_df['contig_size'] = coverm_df.contig_id.map(contig_sizes)
+    #     coverm_df = coverm_add_library_size(coverm_df, bbduk_data_dir=bbduk_data_dir)
+    #     coverm_df = coverm_group_genomes(coverm_df)
+    #     coverm_df['rpkm'] = (coverm_df['read_count'] / (coverm_df['genome_size'] / 1e3)) / (coverm_df.library_size / 1e6) # RPKM is reads per kilobase of transcript per million mapped reads.
+    

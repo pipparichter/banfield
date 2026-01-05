@@ -1,0 +1,259 @@
+genome_id,gene_id,n_samples,accession,description
+mp_18,mp_18.1_1123,6,IPR014721,"Small ribosomal subunit protein uS5 domain 2-type fold, subgroup"
+mp_18,mp_18.1_1123,6,IPR027417,"P-loop containing nucleoside triphosphate hydrolase"
+mp_18,mp_18.1_1123,6,IPR004161,"Translation elongation factor EFTu-like, domain 2"
+mp_18,mp_18.1_1123,6,IPR000640,"Elongation factor EFG, domain V-likei"
+mp_18,mp_18.1_1123,6,IPR041095,"Elongation Factor G, domain II"
+mp_18,mp_18.1_1123,6,IPR005517,"Translation elongation factor EFG/EF2, domain IV"
+mp_18,mp_18.1_1123,6,IPR000795,Translational (tr)-type GTP-binding domain
+mp_18,mp_18.1_1123,6,IPR035647,EF-G domain III/V-like
+mp_18,mp_18.1_1123,6,IPR009000,"Translation protein, beta-barrel domain superfamily"
+mp_18,mp_18.1_1123,6,IPR020568,Ribosomal protein uS5 domain 2-type superfamily
+mp_18,mp_18.1_1123,6,IPR005225,Small GTP-binding domain
+mp_18,mp_18.1_1123,6,IPR004543,"Translation elongation factor EFG/EF2, archaeal"
+mp_18,mp_18.1_1331,4,IPR036603,"RNA polymerase, RBP11-like subunit"
+mp_18,mp_18.1_1331,4,IPR036643,"DNA-directed RNA polymerase, insert domain superfamily"
+mp_18,mp_18.1_1331,4,IPR011263,"DNA-directed RNA polymerase, RpoA/D/Rpb3-type"
+mp_18,mp_18.1_1331,4,IPR011262,"DNA-directed RNA polymerase, insert domain"
+mp_18,mp_18.1_1331,4,IPR050518,Archaeal Rpo3/Eukaryotic RPB3 RNA Polymerase Subunit
+mp_18,mp_18.1_1507,4,IPR044893,"RNA polymerase Rpb1, clamp domain superfamily"
+mp_18,mp_18.1_1507,4,IPR042102,"RNA polymerase Rpb1, domain 3 superfamily"
+mp_18,mp_18.1_1507,4,IPR038120,"RNA polymerase Rpb1, funnel domain superfamily"
+mp_18,mp_18.1_1507,4,IPR007066,"RNA polymerase Rpb1, domain 3"
+mp_18,mp_18.1_1507,4,IPR007081,"RNA polymerase Rpb1, domain 5"
+mp_18,mp_18.1_1507,4,IPR000722,"RNA polymerase, alpha subunit"
+mp_18,mp_18.1_1507,4,IPR007080,"RNA polymerase Rpb1, domain 1"
+mp_18,mp_18.1_1507,4,IPR007083,"RNA polymerase Rpb1, domain 4"
+mp_18,mp_18.1_1507,4,IPR012758,DNA-directed RNA polymerase subunit Rpo1N
+mp_18,mp_18.1_1507,4,IPR006592,"RNA polymerase, N-terminal"
+mp_18,mp_18.1_1507,4,IPR045867,"DNA-directed RNA polymerase, subunit beta-prime"
+mp_18,mp_18.1_1508,5,IPR037033,"DNA-directed RNA polymerase, subunit 2, hybrid-binding domain superfamily"
+mp_18,mp_18.1_1508,5,IPR014724,"RNA polymerase Rpb2, OB-fold"
+mp_18,mp_18.1_1508,5,IPR007120,"DNA-directed RNA polymerase, subunit 2, hybrid-binding domain"
+mp_18,mp_18.1_1508,5,IPR007646,"RNA polymerase Rpb2, domain 4"
+mp_18,mp_18.1_1508,5,IPR007641,"RNA polymerase Rpb2, domain 7"
+mp_18,mp_18.1_1508,5,IPR019969,DNA-directed RNA polymerase subunit Rpo2
+mp_18,mp_18.1_1508,5,IPR015712,"DNA-directed RNA polymerase, subunit 2"
+mp_18,mp_18.1_1908,4,IPR027413,GroEL-like equatorial domain superfamily
+mp_18,mp_18.1_1908,4,IPR027409,GroEL-like apical domain superfamily
+mp_18,mp_18.1_1908,4,IPR027410,TCP-1-like chaperonin intermediate domain superfamily
+mp_18,mp_18.1_1908,4,IPR002423,Chaperonin Cpn60/GroEL/TCP-1 family
+mp_18,mp_18.1_1908,4,IPR012714,"Thermosome, archaeal"
+mp_18,mp_18.1_1908,4,IPR054827,Thermosome subunit alpha
+mp_18,mp_18.1_1908,4,IPR053374,TCP-1 chaperonin-containing T-complex
+mp_18,mp_18.1_1908,4,IPR017998,Chaperone tailless complex polypeptide 1 (TCP-1)
+mp_18,mp_18.1_1923,4,IPR043164,"Large ribosomal subunit protein uL10-like, insertion domain superfamily"
+mp_18,mp_18.1_1923,4,IPR043141,Large ribosomal subunit protein uL10-like domain superfamily
+mp_18,mp_18.1_1923,4,IPR040637,"Large ribosomal subunit protein uL10-like, insertion domain"
+mp_18,mp_18.1_1923,4,IPR001790,Large ribosomal subunit protein uL10
+mp_18,mp_18.1_1923,4,IPR050323,Universal ribosomal protein uL10
+mp_18,mp_18.1_196,5,IPR027417,P-loop containing nucleoside triphosphate hydrolase
+mp_18,mp_18.1_196,5,IPR015946,"K homology domain-like, alpha/beta"
+mp_18,mp_18.1_196,5,IPR002716,PIN domain
+mp_18,mp_18.1_196,5,IPR001482,Type II/IV secretion system domain
+mp_18,mp_18.1_196,5,IPR029060,PIN-like domain superfamily
+mp_18,mp_18.1_196,5,IPR009019,"K homology domain superfamily, prokaryotic type"
+mp_18,mp_18.1_196,5,IPR052041,Nucleic acid metabolism PIN/TRAM-domain-containing protein
+mp_18,mp_18.1_246,4,IPR005485,Large ribosomal subunit protein uL18 eukaryotic/archaeal
+mp_18,mp_18.1_2616,5,IPR013758,"DNA topoisomerase, type IIA, domain A, alpha-beta"
+mp_18,mp_18.1_2616,5,IPR013757,"DNA topoisomerase, type IIA, alpha-helical domain superfamily"
+mp_18,mp_18.1_2616,5,IPR035516,"DNA gyrase/topoisomerase IV, subunit A, C-terminal"
+mp_18,mp_18.1_2616,5,IPR006691,"DNA gyrase/topoisomerase IV, subunit A, C-terminal repeat"
+mp_18,mp_18.1_2616,5,IPR002205,"DNA topoisomerase, type IIA, domain A"
+mp_18,mp_18.1_2616,5,IPR013760,"DNA topoisomerase, type IIA-like domain superfamily"
+mp_18,mp_18.1_2616,5,IPR050220,Type II DNA Topoisomerases
+mp_18,mp_18.1_888,5,IPR027413,GroEL-like equatorial domain superfamily
+mp_18,mp_18.1_888,5,IPR027410,TCP-1-like chaperonin intermediate domain superfamily
+mp_18,mp_18.1_888,5,IPR027409,GroEL-like apical domain superfamily
+mp_18,mp_18.1_888,5,IPR002423,Chaperonin Cpn60/GroEL/TCP-1 family
+mp_18,mp_18.1_888,5,IPR053374,TCP-1 chaperonin-containing T-complex
+mp_18,mp_18.1_888,5,IPR054827,Thermosome subunit alpha
+mp_18,mp_18.1_888,5,IPR012714,"Thermosome, archaeal"
+mp_18,mp_18.1_888,5,IPR017998,Chaperone tailless complex polypeptide 1 (TCP-1)
+mp_4,mp_4.1_1324,4,IPR020056,"Large ribosomal subunit protein bL25/Gln-tRNA synthetase, N-terminal"
+mp_4,mp_4.1_1324,4,IPR014729,Rossmann-like alpha/beta/alpha sandwich fold
+mp_4,mp_4.1_1324,4,IPR020058,"Glutamyl/glutaminyl-tRNA synthetase, class Ib, catalytic domain"
+mp_4,mp_4.1_1324,4,IPR020059,"Glutamyl/glutaminyl-tRNA synthetase, class Ib, anti-codon binding domain"
+mp_4,mp_4.1_1324,4,IPR011035,"Large ribosomal subunit protein bL25/Gln-tRNA synthetase, anti-codon-binding domain superfamily"
+mp_4,mp_4.1_1324,4,IPR004526,"Glutamyl-tRNA synthetase, archaeal/eukaryotic cytosolic"
+mp_4,mp_4.1_1324,4,IPR050132,Glutamine/Glutamate--tRNA Ligase
+mp_4,mp_4.1_1324,4,IPR000924,Glutamyl/glutaminyl-tRNA synthetase
+mp_4,mp_4.1_1337,4,IPR036643,"DNA-directed RNA polymerase, insert domain superfamily"
+mp_4,mp_4.1_1337,4,IPR036603,"RNA polymerase, RBP11-like subunit"
+mp_4,mp_4.1_1337,4,IPR011262,"DNA-directed RNA polymerase, insert domain"
+mp_4,mp_4.1_1337,4,IPR011263,"DNA-directed RNA polymerase, RpoA/D/Rpb3-type"
+mp_4,mp_4.1_1337,4,IPR050518,Archaeal Rpo3/Eukaryotic RPB3 RNA Polymerase Subunit
+mp_4,mp_4.1_160,4,IPR036603,"RNA polymerase, RBP11-like subunit"
+mp_4,mp_4.1_160,4,IPR009025,"DNA-directed RNA polymerase, RBP11-like dimerisation domain"
+mp_4,mp_4.1_2047,4,IPR038069,"Pelota/DOM34, N-terminal domain"
+mp_4,mp_4.1_2047,4,IPR029064,Ribosomal protein eL30-like superfamily
+mp_4,mp_4.1_2047,4,IPR042226,"eRF1, domain 2 superfamily"
+mp_4,mp_4.1_2047,4,IPR005140,eRF1 domain 1/Pelota-like
+mp_4,mp_4.1_2047,4,IPR005142,eRF1 domain 3
+mp_4,mp_4.1_2047,4,IPR005141,eRF1 domain 2
+mp_4,mp_4.1_2047,4,IPR004405,Translation release factor pelota
+mp_4,mp_4.1_2236,4,IPR027386,"Ribosomal uL15, N-terminal"
+mp_4,mp_4.1_2236,4,IPR021131,Large ribosomal subunit protein uL15/eL18
+mp_4,mp_4.1_2236,4,IPR036227,Large ribosomal subunit protein uL15/eL18 superfamily
+mp_4,mp_4.1_2240,4,IPR015974,"Large ribosomal subunit protein eL19, domain 3"
+mp_4,mp_4.1_2240,4,IPR015973,"Large ribosomal subunit protein eL19, domain 2"
+mp_4,mp_4.1_2240,4,IPR015972,"Large ribosomal subunit protein eL19, domain 1"
+mp_4,mp_4.1_2240,4,IPR000196,Large ribosomal subunit protein eL19 domain
+mp_4,mp_4.1_2240,4,IPR035970,Large ribosomal subunit protein eL19 superfamily
+mp_4,mp_4.1_2240,4,IPR039547,Large ribosomal subunit protein eL19
+mp_4,mp_4.1_2240,4,IPR033936,"Large ribosomal subunit protein eL19, archaeal"
+mp_4,mp_4.1_2255,4,IPR014722,"Large ribosomal subunit protein uL2, domain 2"
+mp_4,mp_4.1_2255,4,IPR012340,"Nucleic acid-binding, OB-fold"
+mp_4,mp_4.1_2255,4,IPR014726,"Large ribosomal subunit protein uL2, domain 3"
+mp_4,mp_4.1_2255,4,IPR022669,"Large ribosomal subunit protein uL2, C-terminal"
+mp_4,mp_4.1_2255,4,IPR022666,"Large ribosomal subunit protein uL2, RNA-binding domain"
+mp_4,mp_4.1_2255,4,IPR008991,Translation protein SH3-like domain superfamily
+mp_4,mp_4.1_2255,4,IPR002171,Large ribosomal subunit protein uL2
+mp_4,mp_4.1_2438,4,IPR036925,"Translation initiation factor IF-2, domain 3 superfamily"
+mp_4,mp_4.1_2438,4,IPR027417,P-loop containing nucleoside triphosphate hydrolase
+mp_4,mp_4.1_2438,4,IPR000795,Translational (tr)-type GTP-binding domain
+mp_4,mp_4.1_2438,4,IPR023115,"Translation initiation factor IF- 2, domain 3"
+mp_4,mp_4.1_2438,4,IPR029459,Elongation factor Tu-type domain
+mp_4,mp_4.1_2438,4,IPR009000,"Translation protein, beta-barrel domain superfamily"
+mp_4,mp_4.1_2438,4,IPR004544,"Translation initiation factor aIF-2, archaea"
+mp_4,mp_4.1_2438,4,IPR005225,Small GTP-binding domain
+mp_4,mp_4.1_2438,4,IPR015760,Translation initiation factor IF- 2
+mp_4,mp_4.1_2441,5,IPR029064,Ribosomal protein eL30-like superfamily
+mp_4,mp_4.1_2441,5,IPR004038,Ribosomal protein eL8/eL30/eS12/Gadd45
+mp_4,mp_4.1_2441,5,IPR022481,"Large ribosomal subunit protein eL8, archaea"
+mp_4,mp_4.1_2441,5,IPR018492,Ribosomal protein eL8/Nhp2 family
+mp_4,mp_4.1_245,4,IPR014721,"Small ribosomal subunit protein uS5 domain 2-type fold, subgroup"
+mp_4,mp_4.1_245,4,IPR006204,GHMP kinase N-terminal domain
+mp_4,mp_4.1_245,4,IPR020568,Ribosomal protein uS5 domain 2-type superfamily
+mp_4,mp_4.1_245,4,IPR012043,Pantoate kinase
+mp_4,mp_4.1_2494,4,IPR024049,"eRF1, domain 1"
+mp_4,mp_4.1_2494,4,IPR029064,Ribosomal protein eL30-like superfamily
+mp_4,mp_4.1_2494,4,IPR042226,"eRF1, domain 2 superfamily"
+mp_4,mp_4.1_2494,4,IPR005142,eRF1 domain 3
+mp_4,mp_4.1_2494,4,IPR005140,eRF1 domain 1/Pelota-like
+mp_4,mp_4.1_2494,4,IPR005141,eRF1 domain 2
+mp_4,mp_4.1_2494,4,IPR004403,Peptide chain release factor eRF1/aRF1
+mp_4,mp_4.1_399,5,IPR013757,"DNA topoisomerase, type IIA, alpha-helical domain superfamily"
+mp_4,mp_4.1_399,5,IPR013758,"DNA topoisomerase, type IIA, domain A, alpha-beta"
+mp_4,mp_4.1_399,5,IPR035516,"DNA gyrase/topoisomerase IV, subunit A, C-terminal"
+mp_4,mp_4.1_399,5,IPR006691,"DNA gyrase/topoisomerase IV, subunit A, C-terminal repeat"
+mp_4,mp_4.1_399,5,IPR002205,"DNA topoisomerase, type IIA, domain A"
+mp_4,mp_4.1_399,5,IPR013760,"DNA topoisomerase, type IIA-like domain superfamily"
+mp_4,mp_4.1_399,5,IPR050220,Type II DNA Topoisomerases
+mp_4,mp_4.1_857,6,IPR027409,GroEL-like apical domain superfamily
+mp_4,mp_4.1_857,6,IPR027410,TCP-1-like chaperonin intermediate domain superfamily
+mp_4,mp_4.1_857,6,IPR027413,GroEL-like equatorial domain superfamily
+mp_4,mp_4.1_857,6,IPR002423,Chaperonin Cpn60/GroEL/TCP-1 family
+mp_4,mp_4.1_857,6,IPR012714,"Thermosome, archaeal"
+mp_4,mp_4.1_857,6,IPR053374,TCP-1 chaperonin-containing T-complex
+mp_4,mp_4.1_857,6,IPR054827,Thermosome subunit alpha
+mp_4,mp_4.1_857,6,IPR017998,Chaperone tailless complex polypeptide 1 (TCP-1)
+mp_5,mp_5.17_26,5,IPR027413,GroEL-like equatorial domain superfamily
+mp_5,mp_5.17_26,5,IPR027409,GroEL-like apical domain superfamily
+mp_5,mp_5.17_26,5,IPR027410,TCP-1-like chaperonin intermediate domain superfamily
+mp_5,mp_5.17_26,5,IPR002423,Chaperonin Cpn60/GroEL/TCP-1 family
+mp_5,mp_5.17_26,5,IPR001844,Chaperonin Cpn60/GroEL
+mp_5,mp_5.20_50,6,IPR027410,TCP-1-like chaperonin intermediate domain superfamily
+mp_5,mp_5.20_50,6,IPR027409,GroEL-like apical domain superfamily
+mp_5,mp_5.20_50,6,IPR027413,GroEL-like equatorial domain superfamily
+mp_5,mp_5.20_50,6,IPR002423,Chaperonin Cpn60/GroEL/TCP-1 family
+mp_5,mp_5.20_50,6,IPR054827,Thermosome subunit alpha
+mp_5,mp_5.20_50,6,IPR053374,TCP-1 chaperonin-containing T-complex
+mp_5,mp_5.20_50,6,IPR012714,"Thermosome, archaeal"
+mp_5,mp_5.20_50,6,IPR017998,Chaperone tailless complex polypeptide 1 (TCP-1)
+mp_5,mp_5.5_302,5,IPR027417,P-loop containing nucleoside triphosphate hydrolase
+mp_5,mp_5.5_302,5,IPR015256,"Initiation factor eIF2 gamma, C-terminal"
+mp_5,mp_5.5_302,5,IPR000795,Translational (tr)-type GTP-binding domain
+mp_5,mp_5.5_302,5,IPR009001,"Translation elongation factor EF1A/initiation factor IF2gamma, C-terminal"
+mp_5,mp_5.5_302,5,IPR009000,"Translation protein, beta-barrel domain superfamily"
+mp_5,mp_5.5_302,5,IPR022424,"Translation initiation factor 2, gamma subunit"
+mp_5,mp_5.5_302,5,IPR005225,Small GTP-binding domain
+mp_5,mp_5.5_302,5,IPR050543,Eukaryotic Initiation Factor 2 Gamma Subunit
+mp_5,mp_5.5_302,5,IPR044127,"Initiation factor eIF2 gamma, domain 2"
+mp_5,mp_5.5_302,5,IPR044128,"Initiation factor eIF2 gamma, GTP-binding domain"
+mp_5,mp_5.6_154,6,IPR027413,GroEL-like equatorial domain superfamily
+mp_5,mp_5.6_154,6,IPR027410,TCP-1-like chaperonin intermediate domain superfamily
+mp_5,mp_5.6_154,6,IPR027409,GroEL-like apical domain superfamily
+mp_5,mp_5.6_154,6,IPR002423,Chaperonin Cpn60/GroEL/TCP-1 family
+mp_5,mp_5.6_154,6,IPR012714,"Thermosome, archaeal"
+mp_5,mp_5.6_154,6,IPR054827,Thermosome subunit alpha
+mp_5,mp_5.6_154,6,IPR053374,TCP-1 chaperonin-containing T-complex
+mp_5,mp_5.6_154,6,IPR017998,Chaperone tailless complex polypeptide 1 (TCP-1)
+mp_5,mp_5.7_124,6,IPR027417,P-loop containing nucleoside triphosphate hydrolase
+mp_5,mp_5.7_124,6,IPR014721,"Small ribosomal subunit protein uS5 domain 2-type fold, subgroup"
+mp_5,mp_5.7_124,6,IPR005517,"Translation elongation factor EFG/EF2, domain IV"
+mp_5,mp_5.7_124,6,IPR004161,"Translation elongation factor EFTu-like, domain 2"
+mp_5,mp_5.7_124,6,IPR041095,"Elongation Factor G, domain II"
+mp_5,mp_5.7_124,6,IPR000795,Translational (tr)-type GTP-binding domain
+mp_5,mp_5.7_124,6,IPR000640,"Elongation factor EFG, domain V-like"
+mp_5,mp_5.7_124,6,IPR020568,Ribosomal protein uS5 domain 2-type superfamily
+mp_5,mp_5.7_124,6,IPR009000,"Translation protein, beta-barrel domain superfamily"
+mp_5,mp_5.7_124,6,IPR035647,EF-G domain III/V-like
+mp_5,mp_5.7_124,6,IPR004543,"Translation elongation factor EFG/EF2, archaeal"
+mp_5,mp_5.7_124,6,IPR005225,Small GTP-binding domain
+mp_5,mp_5.11_92,4,IPR014721,"Small ribosomal subunit protein uS5 domain 2-type fold, subgroup"
+mp_5,mp_5.11_92,4,IPR036890,Histidine kinase/HSP90-like ATPase superfamily
+mp_5,mp_5.11_92,4,IPR042120,"MutL, C-terminal domain, dimerisation subdomain"
+mp_5,mp_5.11_92,4,IPR042121,"MutL, C-terminal domain, regulatory subdomain"
+mp_5,mp_5.11_92,4,IPR013507,"DNA mismatch repair protein, S5 domain 2-like"
+mp_5,mp_5.11_92,4,IPR014790,"MutL, C-terminal, dimerisation"
+mp_5,mp_5.11_92,4,IPR037198,"MutL, C-terminal domain superfamily"
+mp_5,mp_5.11_92,4,IPR020568,Ribosomal protein uS5 domain 2-type superfamily
+mp_5,mp_5.11_92,4,IPR002099,DNA mismatch repair protein MutL/Mlh/PMS
+mp_5,mp_5.11_92,4,IPR038973,DNA mismatch repair protein MutL/Mlh/Pms-like
+mp_5,mp_5.13_45,4,IPR002769,Translation initiation factor IF6
+mp_5,mp_5.13_52,4,IPR027413,GroEL-like equatorial domain superfamily
+mp_5,mp_5.13_52,4,IPR027409,GroEL-like apical domain superfamily
+mp_5,mp_5.13_52,4,IPR027410,TCP-1-like chaperonin intermediate domain superfamily
+mp_5,mp_5.13_52,4,IPR002423,Chaperonin Cpn60/GroEL/TCP-1 family
+mp_5,mp_5.13_52,4,IPR054827,Thermosome subunit alpha
+mp_5,mp_5.13_52,4,IPR053374,TCP-1 chaperonin-containing T-complex
+mp_5,mp_5.13_52,4,IPR017998,Chaperone tailless complex polypeptide 1 (TCP-1)
+mp_5,mp_5.13_52,4,IPR012714,"Thermosome, archaeal"
+mp_5,mp_5.31_41,4,IPR042226,"eRF1, domain 2 superfamily"
+mp_5,mp_5.31_41,4,IPR024049,"eRF1, domain 1"
+mp_5,mp_5.31_41,4,IPR029064,Ribosomal protein eL30-like superfamily
+mp_5,mp_5.31_41,4,IPR005142,eRF1 domain 3
+mp_5,mp_5.31_41,4,IPR005140,eRF1 domain 1/Pelota-like
+mp_5,mp_5.31_41,4,IPR005141,eRF1 domain 2
+mp_5,mp_5.31_41,4,IPR004403,Peptide chain release factor eRF1/aRF1
+mp_5,mp_5.5_108,4,IPR027413,GroEL-like equatorial domain superfamily
+mp_5,mp_5.5_108,4,IPR027410,TCP-1-like chaperonin intermediate domain superfamily
+mp_5,mp_5.5_108,4,IPR027409,GroEL-like apical domain superfamily
+mp_5,mp_5.5_108,4,IPR002423,Chaperonin Cpn60/GroEL/TCP-1 family
+mp_5,mp_5.5_108,4,IPR053374,TCP-1 chaperonin-containing T-complex
+mp_5,mp_5.5_108,4,IPR012714,"Thermosome, archaeal"
+mp_5,mp_5.5_108,4,IPR054827,Thermosome subunit alpha
+mp_5,mp_5.5_108,4,IPR017998,Chaperone tailless complex polypeptide 1 (TCP-1)
+mp_5,mp_5.7_122,4,IPR036838,Small ribosomal subunit protein uS10 domain superfamily
+mp_5,mp_5.7_122,4,IPR027486,Small ribosomal subunit protein uS10 domain
+mp_5,mp_5.7_122,4,IPR005729,"Small ribosomal subunit protein uS10, eukaryotic/archaeal"
+mp_5,mp_5.7_122,4,IPR001848,Small ribosomal subunit protein uS10
+mp_5,mp_5.7_123,4,IPR027417,P-loop containing nucleoside triphosphate hydrolase
+mp_5,mp_5.7_123,4,IPR000795,Translational (tr)-type GTP-binding domain
+mp_5,mp_5.7_123,4,IPR004161,"Translation elongation factor EFTu-like, domain 2"
+mp_5,mp_5.7_123,4,IPR054696,"GTP-eEF1A, C-terminal domain"
+mp_5,mp_5.7_123,4,IPR009001,"Translation elongation factor EF1A/initiation factor IF2gamma, C-terminal"
+mp_5,mp_5.7_123,4,IPR009000,"Translation protein, beta-barrel domain superfamily"
+mp_5,mp_5.7_123,4,IPR005225,Small GTP-binding domain
+mp_5,mp_5.7_123,4,IPR004539,"Translation elongation factor EF1A, eukaryotic/archaeal"
+mp_5,mp_5.7_123,4,IPR050100,Translation factor GTPase superfamily members
+mp_5,mp_5.8_84,4,IPR036919,"Large ribosomal subunit protein uL30, ferredoxin-like fold domain superfamily"
+mp_5,mp_5.8_84,4,IPR016082,"Large ribosomal subunit protein uL30-like, ferredoxin-like fold domain"
+mp_5,mp_5.8_84,4,IPR005997,"Large ribosomal subunit protein uL30, archaeal"
+mp_5,mp_5.8_84,4,IPR039699,Large ribosomal subunit protein uL30
+mp_5,mp_5.8_84,4,IPR035808,"Large ribosomal subunit protein uL30, eukaryotic/archaeal"
+mp_5,mp_5.8_87,4,IPR015973,"Large ribosomal subunit protein eL19, domain 2"
+mp_5,mp_5.8_87,4,IPR015974,"Large ribosomal subunit protein eL19, domain 3"
+mp_5,mp_5.8_87,4,IPR015972,"Large ribosomal subunit protein eL19, domain 1"
+mp_5,mp_5.8_87,4,IPR000196,Large ribosomal subunit protein eL19 domain
+mp_5,mp_5.8_87,4,IPR035970,Large ribosomal subunit protein eL19 superfamily
+mp_5,mp_5.8_87,4,IPR039547,Large ribosomal subunit protein eL19
+mp_5,mp_5.8_87,4,IPR033936,"Large ribosomal subunit protein eL19, archaeal"
+# mp_15,mp_15.5_42,4,IPR027410,TCP-1-like chaperonin intermediate domain superfamily
+# mp_15,mp_15.5_42,4,IPR027413,GroEL-like equatorial domain superfamily
+# mp_15,mp_15.5_42,4,IPR027409,GroEL-like apical domain superfamily
+# mp_15,mp_15.5_42,4,IPR002423,Chaperonin Cpn60/GroEL/TCP-1 family
+# mp_15,mp_15.5_42,4,IPR053374,TCP-1 chaperonin-containing T-complex
+# mp_15,mp_15.5_42,4,IPR054827,Thermosome subunit alpha
+# mp_15,mp_15.5_42,4,IPR017998,Chaperone tailless complex polypeptide 1 (TCP-1)

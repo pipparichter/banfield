@@ -63,30 +63,31 @@ metat_check_single_sample = lambda metat_df : metat_df.sample_id.nunique() == 1
 
 # Reference provided as {genome_id:[(genome_id, gene_id), (genome_id, gene_id)]}
 
-def _metat_normalize_alr(metat_df:pd.DataFrame, ref_genes:dict=None, sample_id:str=None):
+def _metat_normalize_alr(metat_df:pd.DataFrame, ref_gene_ids:dict=None, sample_id:str=None):
     assert metat_check_single_sample(metat_df), '_metat_get_normalization_factors_alr'
     normalization_factors = dict()
-    for genome_id, genes in ref_genes.items():
+    for genome_id, genes in ref_gene_ids.items():
         
         read_counts = metat_df[metat_df.gene_id.isin(genes)]
-        read_counts = read_counts[read_counts.read_count_original > 0].read_count
-
-        if len(read_counts) == 0:
-            print(f'_metat_normalize_alr: No reference reads for {genome_id} in {sample_id}.')
+        # read_counts = read_counts[read_counts.read_count_original > 0].read_count
+        read_counts = read_counts.read_count
+        # if len(read_counts) == 0:
+        #     print(f'_metat_normalize_alr: No reference reads for {genome_id} in {sample_id}.')
+        #     normalization_factors[genome_id] = 1 # I think this is reasonable?
         normalization_factors[genome_id] = gmean(read_counts)
     metat_df = metat_df.reset_index() # Restore the original index. 
     metat_df['normalization_factor_alr'] = metat_df.genome_id.map(normalization_factors)
     metat_df['read_count_normalized_alr'] = np.log(metat_df.read_count) - np.log(metat_df.normalization_factor_alr)
     return metat_df
 
-def _metat_normalize_clr(metat_df, ref_genes:list=[], sample_id:str=None):
+def _metat_normalize_clr(metat_df, ref_gene_ids:dict=dict(), sample_id:str=None):
     assert metat_check_single_sample(metat_df), '_metat_normalize_clr'
     normalization_factor = metat_df.groupby('genome_id').apply(lambda df : gmean(df.read_count.values), include_groups=False).to_dict()
     metat_df['normalization_factor_clr'] = metat_df.genome_id.map(normalization_factor)
     metat_df['read_count_normalized_clr'] = np.log(metat_df.read_count) - np.log(metat_df.normalization_factor_clr)
     return metat_df
 
-def metat_normalize(metat_df:pd.DataFrame, ref_genes:dict=dict(), add_pseudocount:str='mzr', method:str='alr'):
+def metat_normalize(metat_df:pd.DataFrame, ref_gene_ids:dict=dict(), add_pseudocount:str='mzr', method:str='alr'):
     methods = dict()
     methods['clr'] = _metat_normalize_clr
     methods['alr'] = _metat_normalize_alr
@@ -95,7 +96,7 @@ def metat_normalize(metat_df:pd.DataFrame, ref_genes:dict=dict(), add_pseudocoun
 
     metat_df_normalized = list()
     for sample_id, df in metat_df.groupby('sample_id', group_keys=True):
-        df = methods[method](df, ref_genes=ref_genes, sample_id=sample_id)
+        df = methods[method](df, ref_gene_ids=ref_gene_ids, sample_id=sample_id)
         metat_df_normalized.append(df)
 
     return pd.concat(metat_df_normalized)
@@ -105,12 +106,12 @@ def metat_normalize(metat_df:pd.DataFrame, ref_genes:dict=dict(), add_pseudocoun
 # Don't think it's worth scaling when looking at a single group of organisms, e.g. all the Methanoperedens. 
 # Might be worth scaling when looking at something like the ECE because so many of the genes are so small. 
         
-def metat_filter(metat_df, threshold:float=(5 / (1e8 / 1e6)), min_samples:int=8, field:str='cpm'):
+def metat_filter(metat_df, threshold:float=(5 / (1e8 / 1e6)), min_samples:int=8, field:str='read_count'):
     genome_id = metat_df.genome_id.values[0]
     # metat_df['cpm'] = metat_df.read_count / (metat_df.library_size / 1e6)
     mask = metat_df.groupby('gene_id').apply(lambda df : np.sum(df[field] >= threshold) >= min_samples, include_groups=False)
     keep_ids = mask.index[mask.values]
-    print(f'metat_filter: Keeping {len(keep_ids)} out of {metat_df['gene_id'].nunique()} total genes for {genome_id}.')
+    # print(f'metat_filter: Keeping {len(keep_ids)} out of {metat_df['gene_id'].nunique()} total genes for {genome_id}.')
     metat_df = metat_df[metat_df['gene_id'].isin(keep_ids)].copy()
     return metat_df
 
@@ -128,6 +129,7 @@ def metat_load(data_dir:str='../data/metat/', read_length:int=150):
     metat_df['genome_id'] = [gene_id.split('.')[0] for gene_id in metat_df.gene_id]
     metat_df['coverage'] = read_length * metat_df.read_count / metat_df.length
     metat_df = metat_add_library_size(metat_df) 
+    metat_df['detected'] = metat_df.read_count > 0
     metat_df['location'] = [re.search('top|bottom|middle', sample_id).group(0) for sample_id in metat_df.sample_id]
     metat_df['reactor'] = [re.search('(ck|n)_', sample_id).group(1) for sample_id in metat_df.sample_id]
     metat_df['year'] = [re.search('2024|2025', sample_id).group(0) for sample_id in metat_df.sample_id]

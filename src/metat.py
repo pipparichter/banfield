@@ -69,30 +69,27 @@ def _metat_normalize_alr(metat_df:pd.DataFrame, ref_gene_ids:dict=None, sample_i
     for genome_id, genes in ref_gene_ids.items():
         
         read_counts = metat_df[metat_df.gene_id.isin(genes)]
-        # read_counts = read_counts[read_counts.read_count_original > 0].read_count
         read_counts = read_counts.read_count
-        # if len(read_counts) == 0:
-        #     print(f'_metat_normalize_alr: No reference reads for {genome_id} in {sample_id}.')
-        #     normalization_factors[genome_id] = 1 # I think this is reasonable?
         normalization_factors[genome_id] = gmean(read_counts)
     metat_df = metat_df.reset_index() # Restore the original index. 
-    metat_df['normalization_factor_alr'] = metat_df.genome_id.map(normalization_factors)
-    metat_df['read_count_normalized_alr'] = np.log(metat_df.read_count) - np.log(metat_df.normalization_factor_alr)
+    metat_df['normalization_factor'] = metat_df.genome_id.map(normalization_factors)
+    metat_df['read_count_normalized'] = np.log(metat_df.read_count) - np.log(metat_df.normalization_factor)
     return metat_df
 
 def _metat_normalize_clr(metat_df, ref_gene_ids:dict=dict(), sample_id:str=None):
-    assert metat_check_single_sample(metat_df), '_metat_normalize_clr'
     normalization_factor = metat_df.groupby('genome_id').apply(lambda df : gmean(df.read_count.values), include_groups=False).to_dict()
-    metat_df['normalization_factor_clr'] = metat_df.genome_id.map(normalization_factor)
-    metat_df['read_count_normalized_clr'] = np.log(metat_df.read_count) - np.log(metat_df.normalization_factor_clr)
+    metat_df['normalization_factor'] = metat_df.genome_id.map(normalization_factor)
+    metat_df['read_count_normalized'] = np.log(metat_df.read_count) - np.log(metat_df.normalization_factor)
     return metat_df
+
 
 def metat_normalize(metat_df:pd.DataFrame, ref_gene_ids:dict=dict(), add_pseudocount:str='mzr', method:str='alr'):
     methods = dict()
     methods['clr'] = _metat_normalize_clr
     methods['alr'] = _metat_normalize_alr
 
-    metat_df = metat_add_pseudocounts(metat_df.copy(), method=add_pseudocount)
+    if 'read_count_original' not in metat_df.columns:
+        metat_df = metat_add_pseudocounts(metat_df.copy(), method=add_pseudocount)
 
     metat_df_normalized = list()
     for sample_id, df in metat_df.groupby('sample_id', group_keys=True):

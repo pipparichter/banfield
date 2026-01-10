@@ -6,10 +6,33 @@ import numpy as np
 from src.bbduk import bbduk_load
 from scipy.stats import gmean
 import re
- 
-# def get_genes(df, genes):
-#     index = list(zip(df.genome_id.values, df.gene_id.values))
-#     return np.array([(gene in genes) for gene in index])
+
+
+def metat_get_diff(metat_df, location:str='bottom', reactor:str='n', genome_id=None, normalization='clr', ref_gene_ids=[], threshold=5, verbose:bool=False):
+
+    assert genome_id is not None, 'metat_get_diff: Genome ID must be specified.'
+    
+    # mask = ((metat_df.genome_id == genome_id) | metat_df.gene_id.isin(ref_gene_ids))
+    mask = (metat_df.genome_id == genome_id)
+    mask = mask & (metat_df.reactor == reactor) & (metat_df.location == location)
+    metat_df = metat_df[mask].copy()
+    sample_ids = metat_df.sample_id.unique()
+    assert len(sample_ids) == 2, f'metat_get_diff: There should be two samples represented in the input DataFrame, but saw {' '.join(sample_ids)}.'
+
+    # metat_df = pd.concat([metat_filter(metat_df, threshold=20, min_samples=1), metat_filter(metat_df, threshold=1, min_samples=2)])
+    metat_df = metat_filter(metat_df, threshold=threshold, min_samples=1)
+    if (normalization == 'alr') and verbose:
+        print(f'get_diff: {np.isin(ref_gene_ids, metat_df.gene_id.unique()).sum()} out of {len(ref_gene_ids)} reference genes retained after filtering.')
+    metat_df = metat_df.drop_duplicates(['gene_id', 'year'])
+    metat_df = metat_normalize(metat_df, method=normalization, ref_gene_ids={genome_id:ref_gene_ids}, add_pseudocount='mzr')
+    diff_df = dict()
+    diff_df = {year:df.set_index('gene_id').sort_index() for year, df in metat_df.groupby('year')}
+
+    diff_df = diff_df['2025'][['read_count_normalized']] - diff_df['2024'][['read_count_normalized']]
+    diff_df = diff_df.reset_index().rename(columns={'read_count_normalized':'diff'})
+    diff_df['genome_id'] = genome_id
+    diff_df['location'] = location
+    return diff_df
 
 
 def metat_add_library_size(metat_df, bbduk_data_dir='../data/bbduk'):
@@ -24,7 +47,7 @@ def metat_add_library_size(metat_df, bbduk_data_dir='../data/bbduk'):
 # (2) Multiplicative zero replacement, which preserves the ratios betweek gene expression levels. 
 #   For differential expression within an organism, I think this should be done on a per-organism basis
 #   (and also per-sample)
-# (3) 
+
 
 def _metat_add_pseudocounts_multiplicative(metat_df:pd.DataFrame):
     n = metat_df.read_count.sum()
@@ -63,7 +86,7 @@ metat_check_single_sample = lambda metat_df : metat_df.sample_id.nunique() == 1
 
 # Reference provided as {genome_id:[(genome_id, gene_id), (genome_id, gene_id)]}
 
-def _metat_normalize_alr(metat_df:pd.DataFrame, ref_gene_ids:dict=None, sample_id:str=None):
+def _metat_normalize_alr(metat_df:pd.DataFrame, ref_gene_ids:dict=None):
     assert metat_check_single_sample(metat_df), '_metat_get_normalization_factors_alr'
     normalization_factors = dict()
     for genome_id, genes in ref_gene_ids.items():
@@ -76,7 +99,7 @@ def _metat_normalize_alr(metat_df:pd.DataFrame, ref_gene_ids:dict=None, sample_i
     metat_df['read_count_normalized'] = np.log(metat_df.read_count) - np.log(metat_df.normalization_factor)
     return metat_df
 
-def _metat_normalize_clr(metat_df, ref_gene_ids:dict=dict(), sample_id:str=None):
+def _metat_normalize_clr(metat_df, ref_gene_ids:dict=dict()):
     normalization_factor = metat_df.groupby('genome_id').apply(lambda df : gmean(df.read_count.values), include_groups=False).to_dict()
     metat_df['normalization_factor'] = metat_df.genome_id.map(normalization_factor)
     metat_df['read_count_normalized'] = np.log(metat_df.read_count) - np.log(metat_df.normalization_factor)
@@ -93,7 +116,7 @@ def metat_normalize(metat_df:pd.DataFrame, ref_gene_ids:dict=dict(), add_pseudoc
 
     metat_df_normalized = list()
     for sample_id, df in metat_df.groupby('sample_id', group_keys=True):
-        df = methods[method](df, ref_gene_ids=ref_gene_ids, sample_id=sample_id)
+        df = methods[method](df, ref_gene_ids=ref_gene_ids)
         metat_df_normalized.append(df)
 
     return pd.concat(metat_df_normalized)

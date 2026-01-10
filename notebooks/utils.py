@@ -48,6 +48,9 @@ level_funcs['phylum'] = get_phylum
 level_funcs['family'] = get_family
 level_funcs['class'] = get_class
 
+# library_sizes = dict()
+# library_sizes['']
+
 
 def load_interproscan(data_dir:str='../data/interproscan/', max_e_value:float=1e-1):
     interproscan_df = list()
@@ -82,4 +85,51 @@ def load_organism_info(path:str):
     df = df[df.coverage > 0].copy()
     df = df.drop(columns=['id']).set_index('name')
     df['taxonomy'] = np.where(df.taxonomy.isnull(), 'none', df.taxonomy)
-    return df 
+    return df
+
+
+def plot_diff_distributions(metat_df:pd.DataFrame, locations=['bottom', 'middle', 'top'], threshold=5, normalization:str='alr', genome_id=None, axes=None, color='lightgray', ref_gene_ids:list=[]):
+
+    for ax, location in zip(axes, locations):
+        figure_df = metat_get_diff(metat_df, genome_id=genome_id, location=location, normalization=normalization, ref_gene_ids=ref_gene_ids, threshold=threshold)
+        
+        sns.kdeplot(figure_df, x='diff', common_norm=False, color=color, ax=ax, label=threshold)
+        
+        ax.set_ylabel('density')
+        ax.set_title(location)
+
+        # if quantile is not None:
+        #     up_threshold = np.quantile(figure_df['diff'].values, 1 - quantile).item()
+        #     down_threshold = np.quantile(figure_df['diff'].values, quantile).item()
+        #     ax.axvline(up_threshold, ls='--', color='black', lw=0.7)
+        #     ax.axvline(down_threshold, ls='--', color='black', lw=0.7)
+
+def plot_read_counts(metat_df:pd.DataFrame, title='ribosomal proteins', drop_empty:bool=True, figsize=(3, 5), reactor:str='n'):
+
+    # assert 'annotation' in metat_df.columns, 'plot_read_counts: Missing required column "annotation"'
+    assert 'read_count' in metat_df.columns, 'plot_read_counts: Missing required column "read_count"'
+    assert 'sample_id' in metat_df.columns, 'plot_read_counts: Missing required column "sample_id"'
+
+    fig, ax = plt.subplots(figsize=figsize)
+    
+    figure_df = metat_df[metat_df.reactor == reactor].copy()
+    figure_df = figure_df.pivot(columns='sample_id', values='read_count', index='gene_id')
+    figure_df.columns = figure_df.columns.str.replace('_metat', '')
+    figure_df = figure_df.fillna(0).astype(int)
+    if drop_empty:
+        print(f'plot_read_counts: Dropping {(figure_df.sum(axis=1).values.ravel() > 0).sum()} genes with no presence in any sample.')
+        figure_df = figure_df[figure_df.sum(axis=1).values.ravel() > 0].copy()
+
+    sns.heatmap(figure_df, annot=True, fmt='d', cmap='Grays', lw=1, cbar=False)
+    ax.set_ylabel('')
+    ax.set_xlabel('')
+    ax.set_title(title)
+
+    if 'annotation' in metat_df.columns:
+        annotations = metat_df.set_index('gene_id').annotation.to_dict()
+        gene_ids = [label.get_text() for label in ax.get_yticklabels()]
+        y_tick_labels = [f'{gene_id} {annotations.get(gene_id, gene_id)}' for gene_id in gene_ids]
+    else:
+        y_tick_labels = ax.get_yticklabels()
+    ax.set_yticks(ax.get_yticks(), y_tick_labels, rotation=0)
+    plt.show() 

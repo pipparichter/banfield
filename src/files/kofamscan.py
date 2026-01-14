@@ -3,6 +3,22 @@ import re
 import numpy as np 
 import os 
 
+def parse_enzyme_commission_code(definition:str):
+    codes = re.search(r'\[EC:(.*)\]', definition, flags=re.DOTALL)
+    if codes is not None:
+        codes = codes.group(0).split()
+    else:
+        return [{f'ec_{i + 1}':'-' for i in range(4)}]
+    
+    parsed_codes = {'ec_1':[], 'ec_2':[], 'ec_3':[], 'ec_4':[]}
+    for code in codes: # Some enzymes have multiple assignments. 
+        pattern = r'(\d+|-).(\d+|-).(\d+|-).(\d+|-)'
+        match = re.search(pattern, code)
+        if match is None:
+            print(code)
+        for i in range(1, 5):
+            parsed_codes[f'ec_{i}'].append(match.group(i))
+    return parsed_codes 
 
 class KofamscanFile():
 
@@ -12,7 +28,7 @@ class KofamscanFile():
 
     @classmethod
     def from_file(cls, path:str):
-        cols = ['id', 'ko', 'threshold', 'score', 'e_value'] # , 'definition']
+        cols = ['gene_id', 'ko', 'threshold', 'score', 'e_value', 'definition']
         # pattern = r'\s+(\d+_\d+)\s+(K\d{5})\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+"(.+)"'
         definition_pattern = r'"(.+)"'
 
@@ -21,11 +37,9 @@ class KofamscanFile():
             for line in f.readlines():
                 if line.startswith('#'):
                     continue 
-                definition = re.search(definition_pattern, line).group(1)
                 line = line.replace('*', '')
-                line = re.sub(definition_pattern, '', line)
-                line = line.strip().split()
-                line = dict(zip(cols, line))
+                line = line.split()
+                
                 line['definition'] = definition
                 df += [line]
 
@@ -38,5 +52,11 @@ class KofamscanFile():
         obj.df = df  
         return obj
 
-    def to_df(self):
-        return self.df.copy()
+    def to_df(self, parse_ecs:bool=True):
+        df = self.df.copy()
+        if parse_ecs:
+            ec_df = pd.DataFrame([parse_enzyme_commission_code(definition) for definition in df.definition])
+            df = pd.concat([df, ec_df], axis=1)
+            df = df.explode(['ec_1', 'ec_2', 'ec_3', 'ec_4'])
+        return df
+

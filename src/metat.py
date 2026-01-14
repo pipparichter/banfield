@@ -136,7 +136,25 @@ def metat_filter(metat_df, threshold:float=(5 / (1e8 / 1e6)), min_samples:int=8,
     return metat_df
 
 
-def metat_load(data_dir:str='../data/metat/', read_length:int=150):
+
+def metat_group_genomes(metat_df:pd.DataFrame):
+    '''Group the DataFrame values across genomes.'''
+    if 'length' in metat_df.columns:
+        metat_df['genome_size'] = metat_df.length # For consistency with coverm_df.
+
+    # Aggregate the metat_df by genome ID. 
+    agg_funcs = {'read_count':'sum', 'genome_size':'sum', 'library_size':'first', 'year':'first', 'location':'first', 'reactor':'first', 'detected':'mean'}
+    agg_funcs = {col:func for col, func in agg_funcs.items() if col in metat_df.columns} # For if the detected column isn't present. 
+
+    metat_df = metat_df.groupby(['genome_id', 'sample_id']).agg(agg_funcs).reset_index()
+    metat_df['rpkm'] = metat_df.read_count / (metat_df.genome_size / 1e3) / (metat_df.library_size / 1e6)
+    metat_df['sample_id'] = metat_df.sample_id.str.replace('_metat', '')
+    metat_df = metat_df.rename(columns={'detected':'fraction_detected'}) # The fraction of genes detected in the sample. 
+    return metat_df
+
+
+
+def metat_load(data_dir:str='../data/metat/', read_length:int=150, group_genomes:bool=False):
     metat_df = list()
     for path in glob.glob(os.path.join(data_dir, '*read_counts')):
         if 'summary' in path:
@@ -153,7 +171,10 @@ def metat_load(data_dir:str='../data/metat/', read_length:int=150):
     metat_df['location'] = [re.search('top|bottom|middle', sample_id).group(0) for sample_id in metat_df.sample_id]
     metat_df['reactor'] = [re.search('(ck|n)_', sample_id).group(1) for sample_id in metat_df.sample_id]
     metat_df['year'] = [re.search('2024|2025', sample_id).group(0) for sample_id in metat_df.sample_id]
+    metat_df['sample_id'] = metat_df.sample_id.str.replace('_metat', '') # Redundant because this is all metaT data anyway.
 
+    if group_genomes:
+        metat_df = metat_group_genomes(metat_df)
     return metat_df
 
 

@@ -132,4 +132,105 @@ def plot_read_counts(metat_df:pd.DataFrame, title='ribosomal proteins', drop_emp
     else:
         y_tick_labels = ax.get_yticklabels()
     ax.set_yticks(ax.get_yticks(), y_tick_labels, rotation=0)
-    plt.show() 
+    plt.show()
+
+
+mcr_accessions = dict()
+mcr_accessions['IPR015823'] = 'methyl-coenzyme M reductase A/B'
+mcr_accessions['IPR008924'] = 'methyl-coenzyme M reductase A/B'
+mcr_accessions['IPR015811'] = 'methyl-coenzyme M reductase A/B'
+mcr_accessions['IPR022680'] = 'methyl-coenzyme M reductase B' # Beta subunit. 
+mcr_accessions['IPR003179'] = 'methyl-coenzyme M reductase B' # Beta subunit. 
+mcr_accessions['IPR022679'] = 'methyl-coenzyme M reductase B' # Beta subunit. 
+mcr_accessions['IPR009047'] = 'methyl-coenzyme M reductase A' # Alpha subunit.
+mcr_accessions['IPR003183'] = 'methyl-coenzyme M reductase A' # Alpha subunit. 
+mcr_accessions['IPR016212'] = 'methyl-coenzyme M reductase A' # Alpha subunit.  
+
+met_accessions = mcr_accessions.copy()
+met_accessions['IPR015823'] = 'methyl-coenzyme M reductase'
+met_accessions['IPR008924'] = 'methyl-coenzyme M reductase'
+met_accessions['IPR015811'] = 'methyl-coenzyme M reductase'
+met_accessions['IPR022680'] = 'methyl-coenzyme M reductase' # Beta subunit. 
+met_accessions['IPR003179'] = 'methyl-coenzyme M reductase' # Beta subunit. 
+met_accessions['IPR022679'] = 'methyl-coenzyme M reductase' # Beta subunit. 
+met_accessions['IPR009047'] = 'methyl-coenzyme M reductase' # Alpha subunit.
+met_accessions['IPR003183'] = 'methyl-coenzyme M reductase' # Alpha subunit. 
+met_accessions['IPR016212'] = 'methyl-coenzyme M reductase' # Alpha subunit. 
+# Tetrapyrrole methylase has two non-similar subdomains. 
+# Includes uroporphyrinogen III methyltransferase and diphthine synthase.
+# These enzymes catalyse the methylation of their substrates using S-adenosyl-L-methionine as a methyl source.
+met_accessions['IPR014776'] = 'tetrapyrrole methylase' 
+met_accessions['IPR014777'] = 'tetrapyrrole methylase'
+# met_accessions['IPR035996'] = 'tetrapyrrole methylase' # Superfamily. 
+met_accessions['IPR000878'] = 'tetrapyrrole methylase'
+met_accessions['IPR015421'] = 'pyridoxal phosphate-dependent transferase'
+met_accessions['IPR015422'] = 'pyridoxal phosphate-dependent transferase'
+met_accessions['IPR036108'] = 'uroporphyrinogen III synthase' # Involved in tetrapyrrole biosynthesis.
+met_accessions['IPR003754'] = 'uroporphyrinogen III synthase'
+met_accessions['IPR039793'] = 'uroporphyrinogen III synthase'
+met_accessions['IPR006366'] = 'uroporphyrin-III C-methyltransferase'
+# met_accessions['IPR036803'] = 'porphobilinogen deaminase' # Superfamily. 
+# met_accessions['IPR022417'] = 'Porphobilinogen deaminase' # Superfamily. 
+met_accessions['IPR022418'] = 'porphobilinogen deaminase'
+met_accessions['IPR000860'] = 'porphobilinogen deaminase'
+# met_accessions['IPR036343'] = 'glutamyl-tRNA reductase' # Superfamily. 
+# met_accessions['IPR036453'] = 'glutamyl-tRNA reductase' # Superfamily. 
+met_accessions['IPR015895'] = 'glutamyl-tRNA reductase' 
+met_accessions['IPR000343'] = 'glutamyl-tRNA reductase' 
+met_accessions['IPR006151'] = 'glutamyl-tRNA reductase' 
+met_accessions['IPR015896'] = 'glutamyl-tRNA reductase' # Involved in tetrapyrrole biosynthesis.
+met_accessions['IPR001731'] = 'delta-aminolevulinic acid dehydratase'
+met_accessions['IPR004551'] = 'diphthine synthase'
+met_accessions['IPR012818'] = 'precorrin methyltransferase'
+met_accessions['IPR012382'] = 'precorrin methyltransferase'
+met_accessions['IPR051810'] = 'precorrin methyltransferase'
+met_accessions['IPR006363'] = 'precorrin methyltransferase' 
+met_accessions['IPR004639'] = 'glutamate-1-semialdehyde aminotransferase'
+
+rnap_accessions = dict()
+rnap_accessions['IPR037034'] = 'RNA polymerase Rpo2' # Superfamily. 
+rnap_accessions['IPR042102'] = 'RNA polymerase Rpo1' # Superfamily. 
+rnap_accessions['IPR044893'] = 'RNA polymerase Rpo1' # Superfamily.
+rnap_accessions['IPR038120'] = 'RNA polymerase Rpo1' # Superfamily. 
+rnap_accessions['IPR036603'] = 'RNA polymerase Rpo11' # Rbp11-like subunit
+# rnap_accessions['IPR036643'] = 'RNA polymerase'
+rnap_accessions['IPR035913'] = 'RNA polymerase Rpo5' # Rbp5-like, superfamily. 
+# rnap_accessions['IPR037033'] = 'RNA polymerase'
+rnap_accessions['IPR014724'] = 'RNA polymerase Rpo2,'
+rnap_accessions['IPR036898'] = 'RNA polymerase Rpo7' # Rbp7-like, superfamily. 
+rnap_accessions['IPR007644'] = 'RNA polymerase Rbo1B' # Beta subunit. 
+rnap_accessions['IPR007120'] = 'RNA polymerase Rbp2'
+rnap_accessions['IPR007642'] = 'RNA polymerase Rpo2'
+rnap_accessions['IPR006110'] = 'RNA polymerase Rpo6'
+rnap_accessions['IPR007646'] = 'RNA polymerase Rpo2'
+rnap_accessions['IPR007641'] = 'RNA polymerase Rpo2'
+rnap_accessions['IPR007645'] = 'RNA polymerase Rpo2'
+rnap_accessions['IPR000783'] = 'RNA polymerase Rpo5'
+rnap_accessions['IPR011263'] = 'RNA polymerase Rpo3'
+# rnap_accessions['IPR011262'] = 'RNA polymerase'
+rnap_accessions['IPR009025'] = 'RNA polymerase Rbp11'
+rnap_accessions['IPR007081'] = 'RNA polymerase Rpo1'
+rnap_accessions['IPR000722'] = 'RNA polymerase Rpo1A' # Alpha subunit.
+rnap_accessions['IPR007066'] = 'RNA polymerase Rpo1'
+rnap_accessions['IPR007083'] = 'RNA polymerase Rpo1'
+rnap_accessions['IPR007080'] = 'RNA polymerase Rpo1'
+rnap_accessions['IPR005574'] = 'RNA polymerase Rpo4'
+rnap_accessions['IPR005576'] = 'RNA polymerase Rpo7' # Rbp7-like
+rnap_accessions['IPR000268'] = 'RNA polymerase Rbp10'
+# rnap_accessions['IPR043502'] = 'DNA/RNA polymerase superfamily'
+rnap_accessions['IPR029040'] = 'RNA polymerase RpoK'
+rnap_accessions['IPR023580'] = 'RNA polymerase Rpo10'
+rnap_accessions['IPR019969'] = 'RNA polymerase Rpo2'
+rnap_accessions['IPR004519'] = 'RNA polymerase Rpo8'
+rnap_accessions['IPR012757'] = 'RNA polymerase Rpo1'
+rnap_accessions['IPR012758'] = 'RNA polymerase Rpo1'
+# rnap_accessions['IPR006592'] = 'RNA polymerase'
+rnap_accessions['IPR001529'] = 'RNA polymerase Rpo10' # Also RpoM.
+rnap_accessions['IPR006591'] = 'RNA polymerase Rpo12' # Also RpoP.
+rnap_accessions['IPR045867'] = 'RNA polymerase Rpo1B' # Subunit beta-prime.
+rnap_accessions['IPR015712'] = 'RNA polymerase Rpo2'
+rnap_accessions['IPR010924'] = 'RNA polymerase Rpo4'
+rnap_accessions['IPR014381'] = 'RNA polymerase Rpo5'
+rnap_accessions['IPR012164'] = 'RNA polymerase Rpo11' # Also RpoS.
+rnap_accessions['IPR045113'] = 'RNA polymerase Rpo7'
+rnap_accessions['IPR006111'] = 'RNA polymerase Rpo6'

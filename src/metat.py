@@ -8,19 +8,20 @@ from scipy.stats import gmean
 import re
 
 
-def metat_get_diff(metat_df, location:str='bottom', reactor:str='n', genome_id=None, normalization='clr', ref_gene_ids=[], threshold=5, verbose:bool=False):
+def metat_get_diff(metat_df, genome_id=None, normalization='clr', ref_gene_ids=[], verbose:bool=False, threshold:int=10):
 
     assert genome_id is not None, 'metat_get_diff: Genome ID must be specified.'
     
     # mask = ((metat_df.genome_id == genome_id) | metat_df.gene_id.isin(ref_gene_ids))
     mask = (metat_df.genome_id == genome_id)
-    mask = mask & (metat_df.reactor == reactor) & (metat_df.location == location)
     metat_df = metat_df[mask].copy()
     sample_ids = metat_df.sample_id.unique()
     assert len(sample_ids) == 2, f'metat_get_diff: There should be two samples represented in the input DataFrame, but saw {' '.join(sample_ids)}.'
 
-    # metat_df = pd.concat([metat_filter(metat_df, threshold=20, min_samples=1), metat_filter(metat_df, threshold=1, min_samples=2)])
-    metat_df = metat_filter(metat_df, threshold=threshold, min_samples=1)
+    n = metat_df.gene_id.nunique()
+    metat_df = metat_filter(metat_df, threshold=1, min_samples=1)
+    print(f'metat_get_diff: Removed {n - metat_df.gene_id.nunique()} genes with zero expression in both samples.')
+
     if (normalization == 'alr') and verbose:
         print(f'get_diff: {np.isin(ref_gene_ids, metat_df.gene_id.unique()).sum()} out of {len(ref_gene_ids)} reference genes retained after filtering.')
     metat_df = metat_df.drop_duplicates(['gene_id', 'year'])
@@ -31,7 +32,6 @@ def metat_get_diff(metat_df, location:str='bottom', reactor:str='n', genome_id=N
     diff_df = diff_df['2025'][['read_count_normalized']] - diff_df['2024'][['read_count_normalized']]
     diff_df = diff_df.reset_index().rename(columns={'read_count_normalized':'diff'})
     diff_df['genome_id'] = genome_id
-    diff_df['location'] = location
     return diff_df
 
 
@@ -106,7 +106,7 @@ def _metat_normalize_clr(metat_df, ref_gene_ids:dict=dict()):
     return metat_df
 
 
-def metat_normalize(metat_df:pd.DataFrame, ref_gene_ids:dict=dict(), add_pseudocount:str='mzr', method:str='alr'):
+def metat_normalize(metat_df:pd.DataFrame, ref_gene_ids:dict=dict(), add_pseudocount:str='mzr', method:str='clr'):
     methods = dict()
     methods['clr'] = _metat_normalize_clr
     methods['alr'] = _metat_normalize_alr
@@ -143,7 +143,7 @@ def metat_group_genomes(metat_df:pd.DataFrame):
         metat_df['genome_size'] = metat_df.length # For consistency with coverm_df.
 
     # Aggregate the metat_df by genome ID. 
-    agg_funcs = {'read_count':'sum', 'genome_size':'sum', 'library_size':'first', 'year':'first', 'location':'first', 'reactor':'first', 'detected':'mean'}
+    agg_funcs = {'read_count':'sum', 'genome_size':'sum', 'library_size':'first', 'year':'first', 'location':'first', 'reactor':'first', 'detected':'mean', 'fraction_reads_in_top_genes':'first'}
     agg_funcs = {col:func for col, func in agg_funcs.items() if col in metat_df.columns} # For if the detected column isn't present. 
 
     metat_df = metat_df.groupby(['genome_id', 'sample_id']).agg(agg_funcs).reset_index()

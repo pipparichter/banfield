@@ -25,6 +25,22 @@ locus_tag_pattern = r'/locus_tag="([^"]+)"'
 #                 content += line
 #     return content
 
+def _clean_product(product:str):
+    product = re.sub(r'[a-z]{3}:[^\s]+' , '', product)
+    product = re.sub(r'\(.*\)' , '', product)
+    product = re.sub(r'\b\w*_\w*\b', '', product) # The \b character represents a word boundary.
+    # product = re.sub(r'\b\w*=\w*\b', '', product) # The \b character represents a word boundary.
+    product = re.sub(r'\s*\S*=\S*.*$', '', product) # Remove any word with an equal sign and all words after it. 
+    if 'Tax' in product:
+        product = 'hypothetical protein'
+    product = product.strip()
+    if len(product) < 2:
+        return 'none'
+    # product = product[0].lower() + product[1:]
+    return product.strip()
+
+
+
 def genbank_read_features(path):
     with open(path, 'r') as f:
         content = f.read()
@@ -61,7 +77,7 @@ def genbank_parse_feature(feature):
     info = dict()
     info['seq'] = re.search(seq_pattern, feature, flags=re.MULTILINE).group(1).replace('\n', '').replace(' ', '').replace('*', '')
     info['product'] = re.search(product_pattern, feature, flags=re.MULTILINE).group(1).replace('\n', '')
-    info['product'] = re.sub(r'\s{2,}', '', info['product']) # Remove all the extra whitespace.
+    info['product'] = re.sub(r'\s{2,}', ' ', info['product']) # Remove all the extra whitespace.
     # info['locus_tag'] = re.search(locus_tag_pattern, feature, flags=re.MULTILINE).group(1).replace('\n', '')
     return info 
 
@@ -129,12 +145,15 @@ class GenBankFile():
         gff_df.to_csv(path, header=None, sep='\t', index=False, mode='a') # Append to the file which already has the header. 
 
 
-    def to_df(self):
+    def to_df(self, clean_product:bool=False):
         df = self.df.copy()
         df = df.set_index('gene_id')
         df['strand'] = ['-' if ('comp' in coordinate) else '+' for coordinate in  df.coordinate]
         df['stop'] = [int(re.search(r'\.\.[<>]*(\d+)', coordinate).group(1)) for coordinate in df.coordinate]
         df['start'] = [int(re.search(r'(\d+)[<>]*\.\.', coordinate).group(1)) for coordinate in df.coordinate]
+        if clean_product:
+            df['product'] = [_clean_product(product) for product in df['product']]
+
         return df
 
     # def to_fasta(path:str):

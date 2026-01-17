@@ -19,6 +19,7 @@ import warnings
 import json
 import itertools
 import subprocess
+from src.files.kofamscan import KofamscanFile
 
 genome_ids = pd.read_csv('./data/genome_metadata.csv').genome_id.values
 contig_sizes = dict()
@@ -50,6 +51,14 @@ level_funcs['class'] = get_class
 
 # library_sizes = dict()
 # library_sizes['']
+
+def load_kofamscan(data_dir:str='../data/kofamscan/', parse_ecs:bool=True):
+    kofamscan_df = list()
+    for path in glob.glob(os.path.join(data_dir, '*')):
+        kofamscan_df.append(KofamscanFile.from_file(path).to_df(parse_ecs=parse_ecs).assign(path=path))
+    kofamscan_df = pd.concat(kofamscan_df)
+    kofamscan_df['genome_id'] = [os.path.basename(path).replace('.txt', '') for path in kofamscan_df.path]
+    return kofamscan_df
 
 
 def load_interproscan(data_dir:str='../data/interproscan/', max_e_value:float=1e-1):
@@ -104,35 +113,48 @@ def plot_diff_distributions(metat_df:pd.DataFrame, locations=['bottom', 'middle'
         #     ax.axvline(up_threshold, ls='--', color='black', lw=0.7)
         #     ax.axvline(down_threshold, ls='--', color='black', lw=0.7)
 
-def plot_read_counts(metat_df:pd.DataFrame, title='ribosomal proteins', drop_empty:bool=True, figsize=(3, 5), reactor:str='n'):
-
-    # assert 'annotation' in metat_df.columns, 'plot_read_counts: Missing required column "annotation"'
-    assert 'read_count' in metat_df.columns, 'plot_read_counts: Missing required column "read_count"'
-    assert 'sample_id' in metat_df.columns, 'plot_read_counts: Missing required column "sample_id"'
-
-    fig, ax = plt.subplots(figsize=figsize)
-    
-    figure_df = metat_df[metat_df.reactor == reactor].copy()
-    figure_df = figure_df.pivot(columns='sample_id', values='read_count', index='gene_id')
-    figure_df.columns = figure_df.columns.str.replace('_metat', '')
-    figure_df = figure_df.fillna(0).astype(int)
-    if drop_empty:
-        print(f'plot_read_counts: Dropping {(figure_df.sum(axis=1).values.ravel() > 0).sum()} genes with no presence in any sample.')
-        figure_df = figure_df[figure_df.sum(axis=1).values.ravel() > 0].copy()
-
-    sns.heatmap(figure_df, annot=True, fmt='d', cmap='Grays', lw=1, cbar=False)
+def plot_read_counts(figure_df:pd.DataFrame, ax=None, v_min=None, v_max=None, title:str=''):
+    v_min = figure_df.min() if (v_min is None) else v_min
+    v_max = figure_df.max() if (v_max is None) else v_max 
+    sns.heatmap(data=figure_df, ax=ax, cmap='Grays', cbar=False, annot=figure_df.values, fmt='d', lw=0.7, linecolor='black', vmin=v_min, vmax=v_max)
+    ax.set_title(title)
     ax.set_ylabel('')
     ax.set_xlabel('')
-    ax.set_title(title)
+    for spine in ax.spines.values():
+        spine.set_visible(True)
+        spine.set_linewidth(1)
+        spine.set_edgecolor('black')
 
-    if 'annotation' in metat_df.columns:
-        annotations = metat_df.set_index('gene_id').annotation.to_dict()
-        gene_ids = [label.get_text() for label in ax.get_yticklabels()]
-        y_tick_labels = [f'{gene_id} {annotations.get(gene_id, gene_id)}' for gene_id in gene_ids]
-    else:
-        y_tick_labels = ax.get_yticklabels()
-    ax.set_yticks(ax.get_yticks(), y_tick_labels, rotation=0)
-    plt.show()
+
+# def plot_read_counts(metat_df:pd.DataFrame, title='ribosomal proteins', drop_empty:bool=True, figsize=(3, 5), reactor:str='n'):
+
+#     # assert 'annotation' in metat_df.columns, 'plot_read_counts: Missing required column "annotation"'
+#     assert 'read_count' in metat_df.columns, 'plot_read_counts: Missing required column "read_count"'
+#     assert 'sample_id' in metat_df.columns, 'plot_read_counts: Missing required column "sample_id"'
+
+#     fig, ax = plt.subplots(figsize=figsize)
+    
+#     figure_df = metat_df[metat_df.reactor == reactor].copy()
+#     figure_df = figure_df.pivot(columns='sample_id', values='read_count', index='gene_id')
+#     figure_df.columns = figure_df.columns.str.replace('_metat', '')
+#     figure_df = figure_df.fillna(0).astype(int)
+#     if drop_empty:
+#         print(f'plot_read_counts: Dropping {(figure_df.sum(axis=1).values.ravel() > 0).sum()} genes with no presence in any sample.')
+#         figure_df = figure_df[figure_df.sum(axis=1).values.ravel() > 0].copy()
+
+#     sns.heatmap(figure_df, annot=True, fmt='d', cmap='Grays', lw=1, cbar=False)
+#     ax.set_ylabel('')
+#     ax.set_xlabel('')
+#     ax.set_title(title)
+
+#     if 'annotation' in metat_df.columns:
+#         annotations = metat_df.set_index('gene_id').annotation.to_dict()
+#         gene_ids = [label.get_text() for label in ax.get_yticklabels()]
+#         y_tick_labels = [f'{gene_id} {annotations.get(gene_id, gene_id)}' for gene_id in gene_ids]
+#     else:
+#         y_tick_labels = ax.get_yticklabels()
+#     ax.set_yticks(ax.get_yticks(), y_tick_labels, rotation=0)
+#     plt.show()
 
 
 mcr_accessions = dict()

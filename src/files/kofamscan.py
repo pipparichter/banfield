@@ -8,7 +8,7 @@ def parse_enzyme_commission_code(definition:str):
     if codes is not None:
         codes = codes.group(0).split()
     else:
-        return [{f'ec_{i + 1}':'-' for i in range(4)}]
+        return {f'ec_{i + 1}':['-'] for i in range(4)}
     
     parsed_codes = {'ec_1':[], 'ec_2':[], 'ec_3':[], 'ec_4':[]}
     for code in codes: # Some enzymes have multiple assignments. 
@@ -28,7 +28,7 @@ class KofamscanFile():
 
     @classmethod
     def from_file(cls, path:str):
-        cols = ['gene_id', 'ko', 'threshold', 'score', 'e_value', 'definition']
+        cols = ['gene_id', 'ko', 'threshold', 'score', 'e_value'] # , 'definition']
         # pattern = r'\s+(\d+_\d+)\s+(K\d{5})\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+"(.+)"'
         definition_pattern = r'"(.+)"'
 
@@ -39,9 +39,9 @@ class KofamscanFile():
                     continue 
                 line = line.replace('*', '')
                 line = line.split()
-                
-                line['definition'] = definition
-                df += [line]
+                row = dict(zip(cols, line[:len(cols)]))
+                row['definition'] = ' '.join(line[len(cols):])
+                df += [row]
 
         df = pd.DataFrame(df)
         df['e_value'] = pd.to_numeric(df.e_value)
@@ -55,8 +55,10 @@ class KofamscanFile():
     def to_df(self, parse_ecs:bool=True):
         df = self.df.copy()
         if parse_ecs:
+            # ec_df = pd.DataFrame([parsed_code for definition in df.definition for parsed_code in parse_enzyme_commission_code(definition)])
             ec_df = pd.DataFrame([parse_enzyme_commission_code(definition) for definition in df.definition])
             df = pd.concat([df, ec_df], axis=1)
             df = df.explode(['ec_1', 'ec_2', 'ec_3', 'ec_4'])
+            df['definition'] = df.definition.str.replace(r'\[.*\]', '', regex=True)
         return df
 
